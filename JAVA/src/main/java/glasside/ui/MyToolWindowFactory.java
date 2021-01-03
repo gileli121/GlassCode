@@ -18,9 +18,9 @@ public class MyToolWindowFactory implements ToolWindowFactory {
    * @param toolWindow current tool window
    */
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-    MyToolWindow myToolWindow = new MyToolWindow(toolWindow);
+    GlassIdeToolWindow glassIdeToolWindow = new GlassIdeToolWindow(toolWindow);
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-    Content content = contentFactory.createContent(myToolWindow.getContent(), "", false);
+    Content content = contentFactory.createContent(glassIdeToolWindow.getContent(), "", false);
     toolWindow.getContentManager().addContent(content);
   }
 

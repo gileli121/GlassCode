@@ -39,7 +39,7 @@
   <vendor url="https://github.com/gileli121">github.com/gileli121</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
-    <toolWindow id="Sample Calendar" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+    <toolWindow id="GlassIDE" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                 factoryClass="glasside.ui.MyToolWindowFactory"/>
   </extensions>
 
