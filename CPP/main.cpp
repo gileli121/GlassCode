@@ -5,16 +5,18 @@
 
 int main()
 {
-
+	SetProcessDPIAware();
+	
     // std::cout << "test";
 
 	renderer::init(true);
 	
-    auto* const target = reinterpret_cast<HWND>(0x0000000000100F7C);
+    auto* const target = reinterpret_cast<HWND>(0x0000000000070A6E);
 
     renderer::set_target(target);
 
-    renderer::enable_glass_mode(true);
+    //renderer::enable_dark_mode(true);
+	renderer::enable_glass_mode(false);
 
 	while (true)
 	{
