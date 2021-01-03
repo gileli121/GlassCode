@@ -10,6 +10,10 @@ import java.util.Calendar;
 public class GlassIdeToolWindow {
 
     private JPanel mainContent;
+    private JSlider slider1;
+    private JSlider slider2;
+    private JSlider slider3;
+    private JCheckBox enableCheckBox;
 
     public GlassIdeToolWindow(ToolWindow toolWindow) {
 
