@@ -40,7 +40,13 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="GlassIDE" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                factoryClass="glasside.ui.MyToolWindowFactory"/>
+                factoryClass="glasside.ui.toolwindow.MyToolWindowFactory"/>
+
+    <applicationConfigurable parentId="tools" instance="glasside.ui.settings.AppSettingsConfigurable"
+                             id="glasside.ui.settings.AppSettingsConfigurable"
+                             displayName="GlassIDE"/>
+    <applicationService serviceImplementation="glasside.ui.settings.AppSettingsState"/>
+
   </extensions>
 
 </idea-plugin>
