@@ -42,7 +42,7 @@
     <toolWindow id="GlassIDE" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                 factoryClass="glasside.ui.toolwindow.MyToolWindowFactory"/>
 
-    <applicationConfigurable parentId="tools" instance="glasside.ui.settings.AppSettingsConfigurable"
+    <applicationConfigurable parentId="appearance" instance="glasside.ui.settings.AppSettingsConfigurable"
                              id="glasside.ui.settings.AppSettingsConfigurable"
                              displayName="GlassIDE"/>
     <applicationService serviceImplementation="glasside.ui.settings.AppSettingsState"/>
