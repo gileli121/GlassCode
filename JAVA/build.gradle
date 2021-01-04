@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id "org.jetbrains.intellij" version "0.4.1"
+    id 'org.jetbrains.intellij' version '0.6.5'
 }
 
 group 'org.example'
@@ -10,7 +10,9 @@ repositories {
     mavenCentral()
 }
 
-
+intellij {
+    version = '2020.3'
+}
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
@@ -28,6 +30,11 @@ test {
     useJUnitPlatform()
 }
 
+patchPluginXml {
+    version = project.version
+    sinceBuild = '202'
+    untilBuild = '203.*'
+}
 
 task addBinariesToSandbox {
     doLast {

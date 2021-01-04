@@ -1,5 +1,3 @@
-// Copyright 2000-2020 JetBrains s.r.o. and other contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package glasside.ui.toolwindow;
 
 import com.intellij.openapi.project.Project;
@@ -18,7 +16,7 @@ public class MyToolWindowFactory implements ToolWindowFactory {
    * @param toolWindow current tool window
    */
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-    GlassIdeToolWindow glassIdeToolWindow = new GlassIdeToolWindow(toolWindow);
+    GlassIdeToolWindow glassIdeToolWindow = new GlassIdeToolWindow(project);
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
     Content content = contentFactory.createContent(glassIdeToolWindow.getContent(), "", false);
     toolWindow.getContentManager().addContent(content);

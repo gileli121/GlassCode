@@ -1,4 +1,4 @@
-package glasside.ui.settings;
+package glasside;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -14,26 +14,26 @@ import org.jetbrains.annotations.Nullable;
  * these persistent application settings are stored.
  */
 @State(
-        name = "glasside.ui.settings.AppSettingsState",
+        name = "glasside.AppSettingsState",
         storages = {@Storage("SdkSettingsPlugin.xml")}
 )
-public class AppSettingsState implements PersistentStateComponent<AppSettingsState> {
+public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage> {
 
   public String userId = "John Q. Public";
   public boolean ideaStatus = false;
 
-  public static AppSettingsState getInstance() {
-    return ServiceManager.getService(AppSettingsState.class);
+  public static GlassIdeStorage getInstance() {
+    return ServiceManager.getService(GlassIdeStorage.class);
   }
 
   @Nullable
   @Override
-  public AppSettingsState getState() {
+  public GlassIdeStorage getState() {
     return this;
   }
 
   @Override
-  public void loadState(@NotNull AppSettingsState state) {
+  public void loadState(@NotNull GlassIdeStorage state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

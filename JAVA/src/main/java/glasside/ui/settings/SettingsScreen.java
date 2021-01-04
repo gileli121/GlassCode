@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class AppSettingsComponent {
+public class SettingsScreen {
     private JPanel mainPanel;
     private JCheckBox enableGPUAccelerationCheckBox;
 

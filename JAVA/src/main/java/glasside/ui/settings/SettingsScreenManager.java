@@ -1,17 +1,18 @@
 package glasside.ui.settings;
 
 import com.intellij.openapi.options.Configurable;
+import glasside.GlassIdeStorage;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 /**
- * Provides controller functionality for application settings.
+ * Provides controller functionality for plugin settings.
  */
-public class AppSettingsConfigurable implements Configurable {
+public class SettingsScreenManager implements Configurable {
 
-  private AppSettingsComponent mySettingsComponent;
+  private SettingsScreen mySettingsComponent;
 
   // A default constructor with no arguments is required because this implementation
   // is registered as an applicationConfigurable EP
@@ -19,7 +20,7 @@ public class AppSettingsConfigurable implements Configurable {
   @Nls(capitalization = Nls.Capitalization.Title)
   @Override
   public String getDisplayName() {
-    return "SDK: Application Settings Example";
+    return "GlassIDE Settings";
   }
 
   @Override
@@ -30,13 +31,13 @@ public class AppSettingsConfigurable implements Configurable {
   @Nullable
   @Override
   public JComponent createComponent() {
-    mySettingsComponent = new AppSettingsComponent();
+    mySettingsComponent = new SettingsScreen();
     return mySettingsComponent.getPanel();
   }
 
   @Override
   public boolean isModified() {
-    AppSettingsState settings = AppSettingsState.getInstance();
+    GlassIdeStorage settings = GlassIdeStorage.getInstance();
     boolean modified = !mySettingsComponent.getUserNameText().equals(settings.userId);
     modified |= mySettingsComponent.getIdeaUserStatus() != settings.ideaStatus;
     return modified;
@@ -44,14 +45,14 @@ public class AppSettingsConfigurable implements Configurable {
 
   @Override
   public void apply() {
-    AppSettingsState settings = AppSettingsState.getInstance();
+    GlassIdeStorage settings = GlassIdeStorage.getInstance();
     settings.userId = mySettingsComponent.getUserNameText();
     settings.ideaStatus = mySettingsComponent.getIdeaUserStatus();
   }
 
   @Override
   public void reset() {
-    AppSettingsState settings = AppSettingsState.getInstance();
+    GlassIdeStorage settings = GlassIdeStorage.getInstance();
     mySettingsComponent.setUserNameText(settings.userId);
     mySettingsComponent.setIdeaUserStatus(settings.ideaStatus);
   }

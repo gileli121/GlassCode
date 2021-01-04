@@ -2,14 +2,13 @@
 
 package glasside.ui.toolwindow;
 
-import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import glasside.GlassIdeStorage;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Calendar;
 
 public class GlassIdeToolWindow {
 
@@ -23,18 +22,20 @@ public class GlassIdeToolWindow {
     private JLabel blurTypeLabel;
 
     private boolean isUiUpdating = false;
+    private final Project project;
 
-    public GlassIdeToolWindow(ToolWindow toolWindow) {
+    public GlassIdeToolWindow(Project project) {
         // TODO: Set the sliders from the settings
 
         System.out.println(1);
 
+        this.project = project;
 
         updateUi();
 
         // Set event listeners
         opacitySlider.addChangeListener(e -> {
-            if (!isUiUpdating) onOpacitySliderChange(opacitySlider.getValue());
+            if (!isUiUpdating) onOpacitySliderChange(opacitySlider.getValue(),e);
         });
 
         brightnessSlider.addChangeListener(e -> {
@@ -55,7 +56,9 @@ public class GlassIdeToolWindow {
 
 
     // region On event methods
-    private void onOpacitySliderChange(int level) {
+    private void onOpacitySliderChange(int level, ChangeEvent e) {
+        GlassIdeStorage glassIdeStorage = ServiceManager.getService(GlassIdeStorage.class);
+
         setOpacityLabelText(level);
     }
 
@@ -106,49 +109,18 @@ public class GlassIdeToolWindow {
 
     private void setBlurTypeLabelText(int type) {
         switch (type) {
-            case 1 -> blurTypeLabel.setText("Medium");
-            case 2 -> blurTypeLabel.setText("High");
-            default -> blurTypeLabel.setText("None");
+            case 1:
+                blurTypeLabel.setText("Medium");
+                break;
+            case 2:
+                blurTypeLabel.setText("High");
+                break;
+            default:
+                blurTypeLabel.setText("None");
         }
     }
 
     // endregion
-
-
-//    private JButton refreshToolWindowButton;
-//    private JButton hideToolWindowButton;
-//    private JLabel currentDate;
-//    private JLabel currentTime;
-//    private JLabel timeZone;
-//    private JPanel myToolWindowContent;
-//
-//    public GlassIdeToolWindow(ToolWindow toolWindow) {
-//        hideToolWindowButton.addActionListener(e -> toolWindow.hide(null));
-//        refreshToolWindowButton.addActionListener(e -> currentDateTime());
-//
-//        this.currentDateTime();
-//    }
-//
-//    public void currentDateTime() {
-//        // Get current date and time
-//        Calendar instance = Calendar.getInstance();
-//        currentDate.setText(
-//                instance.get(Calendar.DAY_OF_MONTH) + "/"
-//                        + (instance.get(Calendar.MONTH) + 1) + "/"
-//                        + instance.get(Calendar.YEAR)
-//        );
-//        currentDate.setIcon(new ImageIcon(getClass().getResource("/toolWindow/Calendar-icon.png")));
-//        int min = instance.get(Calendar.MINUTE);
-//        String strMin = min < 10 ? "0" + min : String.valueOf(min);
-//        currentTime.setText(instance.get(Calendar.HOUR_OF_DAY) + ":" + strMin);
-//        currentTime.setIcon(new ImageIcon(getClass().getResource("/toolWindow/Time-icon.png")));
-//        // Get time zone
-//        long gmt_Offset = instance.get(Calendar.ZONE_OFFSET); // offset from GMT in milliseconds
-//        String str_gmt_Offset = String.valueOf(gmt_Offset / 3600000);
-//        str_gmt_Offset = (gmt_Offset > 0) ? "GMT + " + str_gmt_Offset : "GMT - " + str_gmt_Offset;
-//        timeZone.setText(str_gmt_Offset);
-//        timeZone.setIcon(new ImageIcon(getClass().getResource("/toolWindow/Time-zone-icon.png")));
-//    }
 
     public JPanel getContent() {
         return mainContent;

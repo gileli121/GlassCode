@@ -2,18 +2,18 @@
 
 <idea-plugin>
 
-  <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
-  <id>gileli121.glasside.windows</id>
+    <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
+    <id>gileli121.glasside.windows</id>
 
-  <!-- Text to display as name on Preferences/Settings | Plugin page -->
-  <name>GlassIDE (For Windows)</name>
+    <!-- Text to display as name on Preferences/Settings | Plugin page -->
+    <name>GlassIDE (For Windows)</name>
 
-  <!-- Indicate this plugin can be loaded in all IntelliJ Platform-based products. -->
-  <depends>com.intellij.modules.platform</depends>
+    <!-- Indicate this plugin can be loaded in all IntelliJ Platform-based products. -->
+    <depends>com.intellij.modules.platform</depends>
 
-  <!-- Text to display as description on Preferences/Settings | Plugin page -->
-  <description>
-    <![CDATA[
+    <!-- Text to display as description on Preferences/Settings | Plugin page -->
+    <description>
+        <![CDATA[
       GlassIDE (For Windows)
       <br><br>
       This plugin allows you to make your IDE to be fully transparent while keeping the code sharp
@@ -27,26 +27,38 @@
       <br><br>
       Enjoy!
     ]]>
-  </description>
-  <change-notes>
-    <![CDATA[
+    </description>
+    <change-notes>
+        <![CDATA[
       <ul>
       </ul>
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <!-- Text to display as company information on Preferences/Settings | Plugin page -->
-  <vendor url="https://github.com/gileli121">github.com/gileli121</vendor>
+    <!-- Text to display as company information on Preferences/Settings | Plugin page -->
+    <vendor url="https://github.com/gileli121">github.com/gileli121</vendor>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <toolWindow id="GlassIDE" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                factoryClass="glasside.ui.toolwindow.MyToolWindowFactory"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="GlassIDE" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="glasside.ui.toolwindow.MyToolWindowFactory"/>
 
-    <applicationConfigurable parentId="appearance" instance="glasside.ui.settings.AppSettingsConfigurable"
-                             id="glasside.ui.settings.AppSettingsConfigurable"
-                             displayName="GlassIDE"/>
-    <applicationService serviceImplementation="glasside.ui.settings.AppSettingsState"/>
+        <applicationConfigurable parentId="appearance" instance="glasside.ui.settings.SettingsScreenManager"
+                                 id="glasside.ui.settings.SettingsScreenManager"
+                                 displayName="GlassIDE"/>
 
-  </extensions>
+        <applicationService serviceImplementation="glasside.GlassIdeStorage"/>
+
+        <projectService serviceImplementation="glasside.GlassIdeContext"/>
+<!--        <postStartupActivity implementation="glasside.PostStartupActivity"/>-->
+        
+
+    </extensions>
+
+
+    <applicationListeners>
+        <listener class="glasside.GlassIdeContextInitializer"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
+
 
 </idea-plugin>
