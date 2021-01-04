@@ -10,10 +10,13 @@ import java.util.Calendar;
 public class GlassIdeToolWindow {
 
     private JPanel mainContent;
-    private JSlider slider1;
-    private JSlider slider2;
-    private JSlider slider3;
+    private JSlider opacitySlider;
+    private JSlider brightnessSlider;
+    private JSlider blurTypeSlider;
     private JCheckBox enableCheckBox;
+    private JLabel opacityLabel;
+    private JLabel brightnessLabel;
+    private JLabel blurTypeLabel;
 
     public GlassIdeToolWindow(ToolWindow toolWindow) {
 
