@@ -2,9 +2,14 @@
 
 package glasside.ui.toolwindow;
 
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
+import glasside.GlassIdeContext;
 import glasside.GlassIdeStorage;
+import glasside.helpers.PluginUiHelpers;
+import glasside.ui.settings.SettingsScreenManager;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -22,20 +27,18 @@ public class GlassIdeToolWindow {
     private JLabel blurTypeLabel;
 
     private boolean isUiUpdating = false;
-    private final Project project;
+    private GlassIdeContext context = null;
 
     public GlassIdeToolWindow(Project project) {
-        // TODO: Set the sliders from the settings
 
-        System.out.println(1);
-
-        this.project = project;
+        // Get the context
+        context = ServiceManager.getService(project, GlassIdeContext.class);
 
         updateUi();
 
         // Set event listeners
         opacitySlider.addChangeListener(e -> {
-            if (!isUiUpdating) onOpacitySliderChange(opacitySlider.getValue(),e);
+            if (!isUiUpdating) onOpacitySliderChange(opacitySlider.getValue());
         });
 
         brightnessSlider.addChangeListener(e -> {
@@ -51,28 +54,70 @@ public class GlassIdeToolWindow {
                 onEnableCheckBoxChange(e.getStateChange() == ItemEvent.SELECTED);
         });
 
-
     }
 
 
     // region On event methods
-    private void onOpacitySliderChange(int level, ChangeEvent e) {
-        GlassIdeStorage glassIdeStorage = ServiceManager.getService(GlassIdeStorage.class);
+    private void onOpacitySliderChange(int level) {
+
+        try {
+            context.setOpacityLevel(level);
+        } catch (RuntimeException e) {
+            PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
+        }
 
         setOpacityLabelText(level);
     }
 
     private void onBrightnessSliderChange(int level) {
+
+        try {
+            context.setBrightnessLevel(level);
+        } catch (RuntimeException e) {
+            PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
+        }
+
         setBrightnessLabelText(level);
     }
 
     private void onBlurTypeSliderChange(int level) {
+
+        try {
+            context.setBlurType(level);
+        } catch (RuntimeException e) {
+            PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
+        }
+
         setBlurTypeLabelText(level);
     }
 
     private void onEnableCheckBoxChange(boolean enabled) {
+        try {
+            if (enabled)
+                context.enableGlassMode(opacitySlider.getValue(), brightnessSlider.getValue(),
+                        blurTypeSlider.getValue());
+            else
+                context.disableGlassMode();
+
+        } catch (RuntimeException e) {
+            enableCheckBox.setEnabled(false);
+            PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
+        }
+    }
+
+
+    private void onSaveAsDefaultEvent() {
+        GlassIdeStorage storage = GlassIdeStorage.getInstance();
+        storage.opacityLevel = opacitySlider.getValue();
+        storage.brightnessLevel = brightnessSlider.getValue();
+        storage.blurType = blurTypeSlider.getValue();
+        storage.isEnabled = enableCheckBox.isSelected();
+
+
 
     }
+
+
     // endregion
 
 
@@ -80,22 +125,16 @@ public class GlassIdeToolWindow {
 
     public void updateUi() {
 
-        // TODO: Later it should load it from the UI state object...
-        int opacityLevel = 50;
-        int brightnessLevel = 50;
-        int blurType = 1;
-        boolean isEnabled = true;
-
         isUiUpdating = true;
-        opacitySlider.setValue(opacityLevel);
-        brightnessSlider.setValue(brightnessLevel);
-        blurTypeSlider.setValue(blurType);
-        enableCheckBox.setEnabled(isEnabled);
+        opacitySlider.setValue(context.getOpacityLevel());
+        brightnessSlider.setValue(context.getBrightnessLevel());
+        blurTypeSlider.setValue(context.getBlurType());
+        enableCheckBox.setSelected(context.isEffectEnabled());
         isUiUpdating = false;
 
-        setOpacityLabelText(opacityLevel);
-        setBrightnessLabelText(brightnessLevel);
-        setBlurTypeLabelText(blurType);
+        setOpacityLabelText(context.getOpacityLevel());
+        setBrightnessLabelText(context.getBrightnessLevel());
+        setBlurTypeLabelText(context.getBlurType());
     }
 
 

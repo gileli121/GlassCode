@@ -15,12 +15,18 @@ import org.jetbrains.annotations.Nullable;
  */
 @State(
         name = "glasside.AppSettingsState",
-        storages = {@Storage("SdkSettingsPlugin.xml")}
+        storages = {@Storage("GradleIdeSettings.xml")}
 )
 public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage> {
+//
+//  public String userId = "John Q. Public";
+//  public boolean ideaStatus = false;
 
-  public String userId = "John Q. Public";
-  public boolean ideaStatus = false;
+  public int opacityLevel = 30;
+  public int brightnessLevel = 30;
+  public int blurType = 0;
+  public boolean isEnabled = false;
+
 
   public static GlassIdeStorage getInstance() {
     return ServiceManager.getService(GlassIdeStorage.class);
@@ -36,5 +42,7 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
   public void loadState(@NotNull GlassIdeStorage state) {
     XmlSerializerUtil.copyBean(state, this);
   }
+
+
 
 }

@@ -18,21 +18,21 @@ public class SettingsScreen {
         return enableGPUAccelerationCheckBox;
     }
 
-    @NotNull
-    public String getUserNameText() {
-        return "";
-    }
-
-    public void setUserNameText(@NotNull String newText) {
-    }
-
-    public boolean getIdeaUserStatus() {
-        return true;
-    }
-
-    public void setIdeaUserStatus(boolean newStatus) {
-
-    }
+//    @NotNull
+//    public String getUserNameText() {
+//        return "";
+//    }
+//
+//    public void setUserNameText(@NotNull String newText) {
+//    }
+//
+//    public boolean getIdeaUserStatus() {
+//        return true;
+//    }
+//
+//    public void setIdeaUserStatus(boolean newStatus) {
+//
+//    }
 
 
 }

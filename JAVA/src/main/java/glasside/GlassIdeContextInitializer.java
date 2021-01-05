@@ -22,7 +22,7 @@ public class GlassIdeContextInitializer implements ProjectManagerListener {
     }
 
     GlassIdeContext glassIdeContext = ServiceManager.getService(project, GlassIdeContext.class);
-    glassIdeContext.initialize();
+    glassIdeContext.init();
 
 
   }
