@@ -30,6 +30,14 @@ test {
     useJUnitPlatform()
 }
 
+sourceSets {
+    test {
+        resources {
+            srcDir "main"
+        }
+    }
+}
+
 patchPluginXml {
     version = project.version
     sinceBuild = '202'
