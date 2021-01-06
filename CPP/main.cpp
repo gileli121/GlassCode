@@ -33,7 +33,7 @@ LRESULT CALLBACK window_proc(
 #ifndef _DEBUG
 HWND target_hwnd = nullptr;
 #else
-HWND target_hwnd = reinterpret_cast<HWND>(0x0000000000080DEE);
+HWND target_hwnd = reinterpret_cast<HWND>(0x00000000003F0F20);
 #endif
 
 bool is_cuda_enabled = false;
@@ -51,50 +51,50 @@ int main(const int argc, char* argv[])
 	// bool wait = true;
 	// while (wait);
 
-	// #ifndef _DEBUG
+	#ifndef _DEBUG
 	if (argc - 1 < ARGS_COUNT)
 	{
-		PLOGF << "There are missing arguments. Need at least " << ARGS_COUNT;
+		std::cout << "There are missing arguments. Need at least " << ARGS_COUNT << std::endl;
 		return EXIT_FAILURE;
 	}
 
 
-	PLOGI << "Reading arguments";
+	std::cout << "Reading arguments";
 	target_hwnd = reinterpret_cast<HWND>(atoi(argv[ARGS_WINDOW_HANDLE_IDX]));
 	is_cuda_enabled = atoi(argv[ARGS_IS_CUDA_ENABLED]) != 0;
 	opacity_level = atoi(argv[ARGS_OPACITY_LEVEL_IDX]);
 	brightness_level = atoi(argv[ARGS_BRIGHTNESS_LEVEL_IDX]);
 	blur_type = atoi(argv[ARGS_BLUR_TYPE_IDX]);
-	// #endif
+	#endif
 
 
-	PLOGI << "Checking arguments";
+	std::cout << "Checking arguments" << std::endl;
 	if (!target_hwnd)
 	{
-		PLOGF << "Invalid window handle provided";
+		std::cout << "Invalid window handle provided" << std::endl;
 		return EXIT_FAILURE;
 	}
 
 	if (opacity_level < 0 || opacity_level > 100)
 	{
-		PLOGF << "Invalid opacity level provided";
+		std::cout << "Invalid opacity level provided" << std::endl;
 		return EXIT_FAILURE;
 	}
 
 	if (brightness_level < 0 || brightness_level > 100)
 	{
-		PLOGF << "Invalid brightness level provided";
+		std::cout << "Invalid brightness level provided" << std::endl;
 		return EXIT_FAILURE;
 	}
 
 	if (blur_type < 0 || blur_type > 2)
 	{
-		PLOGF << "Invalid blur type provided";
+		std::cout << "Invalid blur type provided" << std::endl;
 		return EXIT_FAILURE;
 	}
 
 
-	PLOGI << "Creating messages-only window";
+	std::cout << "Creating messages-only window" << std::endl;
 
 	auto create_message_only_window = [&]()
 	{
@@ -106,7 +106,7 @@ int main(const int argc, char* argv[])
 		wx.lpszClassName = class_name;
 		if (!RegisterClassEx(&wx))
 		{
-			PLOGE << "Failed to register class for message-only window";
+			std::cout << "Failed to register class for message-only window" << std::endl;
 			return static_cast<HWND>(nullptr);
 		}
 
@@ -119,10 +119,10 @@ int main(const int argc, char* argv[])
 	auto msg_window = create_message_only_window();
 	std::cout << "MSG_WINDOW=" << msg_window << std::endl;
 
-	PLOGI << "Creating a renderer window for the target window";
+	std::cout << "Creating a renderer window for the target window" << std::endl;
 	if (!renderer::init(is_cuda_enabled))
 	{
-		PLOGF << "Failed to init_frame the renderer";
+		std::cout << "Failed to init_frame the renderer" << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -138,7 +138,7 @@ int main(const int argc, char* argv[])
 			0.0
 		))
 	{
-		PLOGF << "Failed to enable glass mode";
+		std::cout << "Failed to enable glass mode" << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -209,7 +209,7 @@ LRESULT CALLBACK window_proc(
 			break;
 		}
 
-		//PLOGI << "Received Command: ";
+		//std::cout << "Received Command: ";
 	}
 
 

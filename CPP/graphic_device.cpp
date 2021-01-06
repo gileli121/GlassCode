@@ -2,6 +2,7 @@
 #include <roerrorapi.h>
 #include <unknwn.h>
 #include <inspectable.h>
+#include <iostream>
 #include <winrt/windows.graphics.directx.direct3d11.h>
 #include <wincodec.h>
 #include <plog/Log.h>
@@ -126,7 +127,7 @@ namespace graphic_device
 
 	bool init_device(const bool cuda_acceleration)
 	{
-		PLOGI << "Creating graphic device";
+		std::cout << "Creating graphic device";
 
 		// Iterate through the candidate adapters
 		IDXGIFactory* p_factory;
@@ -134,7 +135,7 @@ namespace graphic_device
 
 		if (!SUCCEEDED(hr))
 		{
-			PLOGE << "No DXGI Factory created";
+			std::cout << "No DXGI Factory created" << std::endl;
 			close();
 			return false;
 		}
@@ -163,7 +164,7 @@ namespace graphic_device
 
 		if (helpers::create_d_3d_device(&d3d_device, graphic_adapter) != S_OK)
 		{
-			PLOGE << "Failed to create d3d device using adapter " << graphic_adapter;
+			std::cout << "Failed to create d3d device using adapter " << graphic_adapter << std::endl;
 			close();
 			return false;
 		}
@@ -171,7 +172,7 @@ namespace graphic_device
 
 		if (d3d_device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgi_device)) != S_OK)
 		{
-			PLOGE << "Failed to get IDXGIDevice interface from the d3dDevice";
+			std::cout << "Failed to get IDXGIDevice interface from the d3dDevice" << std::endl;
 			close();
 			return false;
 		}
@@ -180,7 +181,7 @@ namespace graphic_device
 		d3d_device->GetImmediateContext(&d3d_context);
 		if (d3d_context == nullptr)
 		{
-			PLOGE << "Failed to get d3dContext from the D3D device";
+			std::cout << "Failed to get d3dContext from the D3D device" << std::endl;
 			close();
 			return false;
 		}
@@ -188,7 +189,7 @@ namespace graphic_device
 		device = direct3d11_interop::CreateDirect3DDevice(dxgi_device);
 		if (device == nullptr)
 		{
-			PLOGE << "Failed to CreateDirect3DDevice(dxgiDevice)";
+			std::cout << "Failed to CreateDirect3DDevice(dxgiDevice)" << std::endl;
 			close();
 			return false;
 		}
@@ -201,7 +202,7 @@ namespace graphic_device
 		if (swap_chain)
 			return true;
 
-		PLOGI << "Creating swapchain for the graphic device";
+		std::cout << "Creating swapchain for the graphic device" << std::endl;
 
 
 		auto d3d_device = direct3d11_interop::GetDXGIInterfaceFromObject<ID3D11Device>(device);
@@ -217,7 +218,7 @@ namespace graphic_device
 		swap_chain = com_ptr_swap_chain.get();
 		if (swap_chain == nullptr)
 		{
-			PLOGE << "Failed to create swapchain";
+			std::cout << "Failed to create swapchain" << std::endl;
 			return false;
 		}
 
@@ -227,7 +228,7 @@ namespace graphic_device
 
 	void resize_swap_chain(const int buffer_x_size, const int buffer_y_size)
 	{
-		PLOGI << "Resizing swapchain";
+		std::cout << "Resizing swapchain" << std::endl;
 
 		swap_chain->ResizeBuffers
 		(
@@ -241,7 +242,7 @@ namespace graphic_device
 
 	void delete_swap_chain()
 	{
-		PLOGI << "Deleting swapchain";
+		std::cout << "Deleting swapchain" << std::endl;
 
 		//swapChain->Release();
 		swap_chain = nullptr;
@@ -250,7 +251,7 @@ namespace graphic_device
 
 	bool create_texture(ID3D11Texture2D** texture, const UINT access_flags, const D3D11_USAGE usage)
 	{
-		PLOGI << "Creating texture";
+		std::cout << "Creating texture" << std::endl;
 
 		winrt::com_ptr<ID3D11Texture2D> back_buffer;
 		winrt::check_hresult(swap_chain->GetBuffer(0, winrt::guid_of<ID3D11Texture2D>(), back_buffer.put_void()));
@@ -269,7 +270,7 @@ namespace graphic_device
 		);
 		if (hr2 != S_OK)
 		{
-			PLOGE << "Failed to create texture, access denied";
+			std::cout << "Failed to create texture, access denied" << std::endl;
 			return false;
 		}
 
@@ -286,7 +287,7 @@ namespace graphic_device
 		}
 		catch (std::exception&)
 		{
-			PLOGE << "exception copy_texture";
+			std::cout << "exception copy_texture" << std::endl;
 		}
 	}
 
@@ -307,7 +308,7 @@ namespace graphic_device
 
 		if (hr != S_OK)
 		{
-			PLOGE << "Failed to get mapped cpu texture";
+			std::cout << "Failed to get mapped cpu texture" << std::endl;
 			return false;
 		}
 

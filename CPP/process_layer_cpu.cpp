@@ -3,6 +3,8 @@
 
 #include "process_layer_cpu.h"
 
+
+#include <iostream>
 #include <psapi.h>
 
 
@@ -84,7 +86,7 @@ namespace process_layer_cpu
 			image_area_data = static_cast<bool*>(malloc(xy_size * sizeof(bool)));
 			if (!image_area_data)
 			{
-				PLOGE << "Failed to malloc CPU memory for d_image_area_data";
+				std::cout << "Failed to malloc CPU memory for d_image_area_data" << std::endl;
 				return false;
 			}
 
@@ -1006,7 +1008,7 @@ namespace process_layer_cpu
 				cached_pixels = static_cast<byte*>(malloc(x_size * 4 * y_size * sizeof(byte)));
 				if (!cached_pixels)
 				{
-					PLOGE << "Failed to allocate memory for cached_pixels";
+					std::cout << "Failed to allocate memory for cached_pixels" << std::endl;
 					return false;
 				}
 
@@ -1018,13 +1020,13 @@ namespace process_layer_cpu
 
 			if (map_images::is_enabled && !map_images::init())
 			{
-				PLOGE << "map_images::init() failed";
+				std::cout << "map_images::init() failed" << std::endl;
 				return false;
 			}
 
 			if (glass_effect::is_enabled && !glass_effect::init())
 			{
-				PLOGE << "glass_effect::init() failed";
+				std::cout << "glass_effect::init() failed" << std::endl;
 				return false;
 			}
 
@@ -1072,7 +1074,7 @@ namespace process_layer_cpu
 
 		if (hr != S_OK)
 		{
-			PLOGE << "Failed to get mapped cpu texture";
+			std::cout << "Failed to get mapped cpu texture" << std::endl;
 			return false;
 		}
 

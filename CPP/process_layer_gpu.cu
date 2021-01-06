@@ -12,6 +12,8 @@
 
 #include "process_layer_gpu.h"
 
+
+#include <iostream>
 #include <psapi.h>
 
 
@@ -106,7 +108,7 @@ namespace process_layer_gpu
 		{
 			auto on_error = [&](const char* error_message)
 			{
-				PLOGE << "load_frame failed: " << error_message;
+				std::cout << "load_frame failed: " << error_message;
 
 				dispose();
 				return nullptr;
@@ -639,7 +641,7 @@ namespace process_layer_gpu
 
 		if (hr != S_OK)
 		{
-			PLOGE << "Failed to get mapped cpu texture";
+			std::cout << "Failed to get mapped cpu texture";
 			return false;
 		}
 
@@ -673,7 +675,7 @@ namespace process_layer_gpu
 
 			if (hr != S_OK)
 			{
-				PLOGE << "Failed to get mapped cpu texture";
+				std::cout << "Failed to get mapped cpu texture";
 				return false;
 			}
 

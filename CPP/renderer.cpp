@@ -21,6 +21,8 @@
 
 #include "renderer.h"
 
+#include <iostream>
+
 namespace renderer
 {
 	/**
@@ -200,13 +202,13 @@ namespace renderer
 	 */
 	bool init(const bool cuda_acceleration)
 	{
-		PLOGI << "Initializing renderer";
+		std::cout << "Initializing renderer" << std::endl;
 
 		fatal_error = false;
 		
 		if (!graphic_device::init_device(cuda_acceleration))
 		{
-			PLOGE << "Failed to load_frame graphic device for rendering";
+			std::cout << "Failed to load_frame graphic device for rendering" << std::endl;
 			return false;
 		}
 
@@ -219,13 +221,13 @@ namespace renderer
 
 		if (!display_layer::init())
 		{
-			PLOGE << "Failed to load_frame display_layer";
+			std::cout << "Failed to load_frame display_layer" << std::endl;
 			return false;
 		}
 
 		if (!capture_layer::init())
 		{
-			PLOGE << "Failed to load_frame capture_layer";
+			std::cout << "Failed to load_frame capture_layer" << std::endl;
 			return false;
 		}
 
@@ -276,18 +278,18 @@ namespace renderer
 	{
 		if (rendering) return true;
 
-		PLOGI << "Init renderer for " << target_hwnd;
+		std::cout << "Init renderer for " << target_hwnd << std::endl;
 
 		if (!GetWindowPlacement(target_hwnd, &target_placement))
 		{
-			PLOGE << "Failed to get window placement, Error: " << GetLastError();
+			std::cout << "Failed to get window placement, Error: " << GetLastError() << std::endl;
 			return false;
 		}
 
 		// Create the display layer
 		if (!display_layer::create_layer())
 		{
-			PLOGE << "Failed to create capture layer";
+			std::cout << "Failed to create capture layer" << std::endl;
 			return false;
 		}
 
@@ -296,7 +298,7 @@ namespace renderer
 		{
 			if (!display_layer::set_target_window_transparent())
 			{
-				PLOGE << "Failed to set target window transparent";
+				std::cout << "Failed to set target window transparent" << std::endl;
 				display_layer::dispose();
 				return false;
 			}
@@ -307,7 +309,7 @@ namespace renderer
 		// TODO: Maybe I should remove it
 		if (!display_layer::create_screen_buffer())
 		{
-			PLOGE << "Failed to create screen buffer for display layer";
+			std::cout << "Failed to create screen buffer for display layer" << std::endl;
 			return false;
 		}
 
@@ -325,7 +327,7 @@ namespace renderer
 		// Create the capture layer
 		if (!capture_layer::create_layer())
 		{
-			PLOGE << "Failed to create capture layer";
+			std::cout << "Failed to create capture layer" << std::endl;
 			return false;
 		}
 
@@ -352,7 +354,7 @@ namespace renderer
 				process_layer_cpu::enable_cache_buffer(false);
 				if (!process_layer_gpu::enable_cache_buffer(true))
 				{
-					PLOGE << "process_layer_gpu::enable_cache_buffer(true) failed";
+					std::cout << "process_layer_gpu::enable_cache_buffer(true) failed" << std::endl;
 					return false;
 				}
 			}
@@ -463,7 +465,7 @@ namespace renderer
 		if (!graphic_device::create_texture(&cpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 		                                    D3D11_USAGE_STAGING))
 		{
-			PLOGE << "Failed to init cpu_texture";
+			std::cout << "Failed to init cpu_texture" << std::endl;
 			return false;
 		}
 
@@ -486,7 +488,7 @@ namespace renderer
 	{
 		if (!init_cpu_process_mode(captured_texture))
 		{
-			PLOGE << "init_cpu_process_mode(*) failed";
+			std::cout << "init_cpu_process_mode(*) failed" << std::endl;
 			return false;
 		}
 
@@ -499,7 +501,7 @@ namespace renderer
 		if (!graphic_device::create_texture(&gpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 		                                    D3D11_USAGE_STAGING))
 		{
-			PLOGE << "Failed to init gpu_texture";
+			std::cout << "Failed to init gpu_texture" << std::endl;
 			if (cpu_texture)
 			{
 				cpu_texture->Release();
@@ -535,7 +537,7 @@ namespace renderer
 
 			if (!process_layer_cpu::begin_process(cpu_texture, x_size, y_size))
 			{
-				PLOGF << "process_layer_cpu::begin_process(*) failed";
+				std::cout << "process_layer_cpu::begin_process(*) failed" << std::endl;
 				return false; // Signal fatal error
 			}
 
@@ -561,7 +563,7 @@ namespace renderer
 
 		if (!process_layer_gpu::begin_process(gpu_texture, x_size, y_size))
 		{
-			PLOGF << "process_layer_gpu::begin_process(*) failed";
+			std::cout << "process_layer_gpu::begin_process(*) failed" << std::endl;
 			return false; // Signal fatal error
 		}
 
@@ -571,7 +573,7 @@ namespace renderer
 			new_frame = force_render || process_layer_gpu::is_new_pixels(error);
 			if (error)
 			{
-				PLOGF << "process_layer_gpu::is_new_pixels(error) failed";
+				std::cout << "process_layer_gpu::is_new_pixels(error) failed" << std::endl;
 				return false; // Signal fatal error
 			}
 
@@ -584,7 +586,7 @@ namespace renderer
 
 		if (!process_layer_gpu::set_image_area_data(image_area_data))
 		{
-			PLOGF << "process_layer_gpu::set_image_area_data(*) failed";
+			std::cout << "process_layer_gpu::set_image_area_data(*) failed";
 			process_layer_gpu::end_process();
 			return false; // Signal fatal error
 		}
@@ -601,7 +603,7 @@ namespace renderer
 
 			if (!process_layer_gpu::invert_colors())
 			{
-				PLOGF << "process_layer_gpu::invert_colors(*) failed";
+				std::cout << "process_layer_gpu::invert_colors(*) failed" << std::endl;
 				process_layer_gpu::end_process();
 				return false; // Signal fatal error
 			}
@@ -611,7 +613,7 @@ namespace renderer
 		{
 			if (!process_layer_gpu::glass_effect::map_shapes())
 			{
-				PLOGF << "process_layer_gpu::glass_effect::map_shapes(*) failed";
+				std::cout << "process_layer_gpu::glass_effect::map_shapes(*) failed";
 				process_layer_gpu::end_process();
 				return false; // Signal fatal error
 			}
@@ -637,7 +639,7 @@ namespace renderer
 
 		if (!process_layer_cpu::begin_process(cpu_texture, x_size, y_size))
 		{
-			PLOGF << "process_layer_cpu::begin_process(*) failed";
+			std::cout << "process_layer_cpu::begin_process(*) failed" << std::endl;
 			return false; // Signal fatal error
 		}
 
@@ -712,11 +714,6 @@ namespace renderer
 				{
 					Sleep(1000);
 
-					// Prevent some another bug with programs like notepad that for some reason
-					// The client area of the window is not maximized after maximize awd
-					SendMessage(target_hwnd, WM_SIZE, SIZE_MAXIMIZED,
-					            MAKELPARAM(captured_frame.x_size, captured_frame.y_size));
-
 					was_maximized = false;
 					update_size = true;
 				}
@@ -762,7 +759,7 @@ namespace renderer
 				{
 					if (!init_gpu_process_mode(captured_frame.textrue))
 					{
-						PLOGE << "init_gpu_process_mode(*) failed";
+						std::cout << "init_gpu_process_mode(*) failed" << std::endl;
 						fatal_error = true;
 					}
 				}
@@ -770,7 +767,7 @@ namespace renderer
 				{
 					if (!init_cpu_process_mode(captured_frame.textrue))
 					{
-						PLOGE << "init_cpu_process_mode(*) failed";
+						std::cout << "init_cpu_process_mode(*) failed" << std::endl;
 						fatal_error = true;
 					}
 				}
@@ -831,7 +828,7 @@ namespace renderer
 	 */
 	void enable_dark_mode(const bool filter_images)
 	{
-		PLOGI << "Enabling dark mode for " << target_hwnd;
+		std::cout << "Enabling dark mode for " << target_hwnd << std::endl;
 		startup_rendering = true;
 		renderer::filter_images = filter_images;
 		brightness_check_timer = clock();
@@ -843,7 +840,7 @@ namespace renderer
 	 */
 	void disable_dark_mode()
 	{
-		PLOGI << "Disabling dark mode for " << target_hwnd;
+		std::cout << "Disabling dark mode for " << target_hwnd << std::endl;
 		un_init_for_target_hwnd();
 		dark_mode = false;
 	}
@@ -864,7 +861,7 @@ namespace renderer
 	                       const bool dark_background, const double background_level, const double images_level,
 	                       const double texts_level)
 	{
-		PLOGI << "Enabling glass mode for " << target_hwnd;
+		std::cout << "Enabling glass mode for " << target_hwnd << std::endl;
 		// Set the variables
 		glass_mode = true;
 		glass_dark_background = dark_background; //dark_background;
@@ -876,10 +873,10 @@ namespace renderer
 		glass_texts = texts_level;
 		startup_rendering = true;
 
-		if (!init_for_target_hwnd(true))
+		if (!init_for_target_hwnd())
 		{
 			glass_mode = false;
-			PLOGE << "Failed to enable glass mode for " << target_hwnd;
+			std::cout << "Failed to enable glass mode for " << target_hwnd << std::endl;
 			return false;
 		}
 
@@ -891,7 +888,7 @@ namespace renderer
 	 */
 	void disable_glass_mode()
 	{
-		PLOGI << "Disabling glass mode for " << target_hwnd;
+		std::cout << "Disabling glass mode for " << target_hwnd;
 		un_init_for_target_hwnd();
 		glass_mode = false;
 	}
@@ -944,10 +941,12 @@ namespace renderer
 	 */
 	bool process_window_placement(bool& placement_changed)
 	{
+
+		
 		WINDOWPLACEMENT placement_new = {0};
 		if (!GetWindowPlacement(target_hwnd, &placement_new))
 		{
-			PLOGE << "Failed to get window placement. Window may be deleted";
+			std::cout << "Failed to get window placement. Window may be deleted" << std::endl;
 			return false;
 		}
 
@@ -961,7 +960,7 @@ namespace renderer
 			case SW_HIDE:
 			case SW_MINIMIZE:
 			case SW_SHOWMINIMIZED:
-				PLOGI << "Window is not on screen so suspending capturing";
+				std::cout << "Window is not on screen so suspending capturing" << std::endl;
 				un_init_for_target_hwnd();
 				placement_changed = true;
 				window_hidden = true;
@@ -977,7 +976,7 @@ namespace renderer
 				if (old_show_cmd == SW_MINIMIZE || old_show_cmd == SW_SHOWMINIMIZED)
 					x_size = y_size = 0; // Prevent some bug when the window restored from minimized state
 
-				PLOGI << "Window maximized / restored / showed -> Reloading the layers";
+				std::cout << "Window maximized / restored / showed -> Reloading the layers" << std::endl;
 
 
 				if (!process_frame_thread_exited)
@@ -1039,7 +1038,7 @@ namespace renderer
 
 				if (!capture_layer_bitblt::capture(target_rect.left, target_rect.top, x_size, y_size))
 				{
-					PLOGE << "Failed to capture window using BitBlt API";
+					std::cout << "Failed to capture window using BitBlt API" << std::endl;
 					brightness_check_timer = clock();
 					return;
 				}

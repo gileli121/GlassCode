@@ -11,6 +11,8 @@
 
 #include "display_layer.h"
 
+#include <iostream>
+
 
 namespace display_layer_helpers
 {
@@ -110,7 +112,7 @@ namespace display_layer
 
 	bool init()
 	{
-		PLOGI << "Initializing display_layer";
+		std::cout << "Initializing display_layer" << std::endl;
 
 		instance = GetModuleHandle(NULL);
 
@@ -132,7 +134,7 @@ namespace display_layer
 
 		if (!RegisterClassEx(&wndclassex))
 		{
-			PLOGE << "Failed to register window class";
+			std::cout << "Failed to register window class" << std::endl;
 			return false;
 		}
 
@@ -196,10 +198,11 @@ namespace display_layer
 		const auto res = DwmGetWindowAttribute(target_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &target_rect, sizeof(RECT));
 		if (res != S_OK)
 		{
-			PLOGE << "Failed to get window size for " << target_hwnd << " , HRESULT=" << res;
+			std::cout << "Failed to get window size for " << target_hwnd << " , HRESULT=" << res << std::endl;
 			return false;
 		}
 
+		
 		return true;
 	}
 
@@ -243,11 +246,11 @@ namespace display_layer
 
 	bool create_layer()
 	{
-		PLOGI << "Creating layer";
+		std::cout << "Creating layer" << std::endl;
 
 		if (!update_target_rect())
 		{
-			PLOGE << "Failed to get the size and position of the target window " << target_hwnd;
+			std::cout << "Failed to get the size and position of the target window " << target_hwnd << std::endl;
 			return false;
 		}
 
@@ -258,7 +261,7 @@ namespace display_layer
 
 		if (!display_hwnd)
 		{
-			PLOGE << "Failed to create layer window for " << target_hwnd;
+			std::cout << "Failed to create layer window for " << target_hwnd << std::endl;
 			return false;
 		}
 
@@ -347,11 +350,11 @@ namespace display_layer
 	{
 		using namespace display_layer_helpers;
 
-		PLOGI << "Initializing screen buffer for window " << target_hwnd;
+		std::cout << "Initializing screen buffer for window " << target_hwnd << std::endl;
 
 		if (graphic_device::swap_chain)
 		{
-			PLOGI << "Deleting existing swap chain";
+			std::cout << "Deleting existing swap chain" << std::endl;
 			graphic_device::delete_swap_chain();
 		}
 
@@ -361,7 +364,7 @@ namespace display_layer
 		// Option 2 to create the swap chain - did not work perfect .....
 		if (!graphic_device::create_swap_chain(buffer.x_size, buffer.y_size))
 		{
-			PLOGE << "Failed to create swap chain for display layer";
+			std::cout << "Failed to create swap chain for display layer" << std::endl;
 		}
 
 

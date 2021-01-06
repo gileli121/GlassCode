@@ -5,6 +5,8 @@
 
 #include "capture_layer_bitblt.h"
 
+#include <iostream>
+
 // Capture layer using the Magnification API
 namespace capture_layer_bitblt
 {
@@ -33,7 +35,7 @@ namespace capture_layer_bitblt
 
 	bool create_capture_buffer(const int x_size, const int y_size)
 	{
-		PLOGI << "Creating capture buffer";
+		std::cout << "Creating capture buffer" << std::endl;
 
 		if (bitmap_src)
 		{
@@ -60,7 +62,7 @@ namespace capture_layer_bitblt
 		old_object = SelectObject(hdc_rect, bitmap_src);
 		if (!old_object)
 		{
-			PLOGE << "Failed to create capture buffer";
+			std::cout << "Failed to create capture buffer" << std::endl;
 			un_init_capture();
 			return false;
 		}
