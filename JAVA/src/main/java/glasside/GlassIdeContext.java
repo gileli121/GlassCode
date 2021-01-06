@@ -1,8 +1,6 @@
 package glasside;
 
-import com.intellij.notification.*;
 import com.intellij.openapi.project.Project;
-import glasside.helpers.PluginUiHelpers;
 import glasside.helpers.WindowRenderer;
 import glasside.helpers.WindowsHelpers;
 
@@ -12,6 +10,7 @@ public class GlassIdeContext {
     private final Project project;
     private String initErrorMsg = null;
     private WindowRenderer renderer = null;
+    private GlassIdeStorage storage = null;
 
     private int opacityLevel = 30;
     private int brightnessLevel = 30;
@@ -20,12 +19,11 @@ public class GlassIdeContext {
 
     public GlassIdeContext(Project project) {
         this.project = project;
+        this.storage = GlassIdeStorage.getInstance();
     }
 
     // region init methods
     public void init() {
-
-        GlassIdeStorage storage = GlassIdeStorage.getInstance();
 
         this.opacityLevel = storage.opacityLevel;
         this.brightnessLevel = storage.brightnessLevel;
@@ -66,7 +64,7 @@ public class GlassIdeContext {
 
     public void enableGlassMode(int opacityLevel,int brightnessLevel, int blurType) {
         abortIfInitError();
-        getRenderer().enableEffect(opacityLevel, brightnessLevel, blurType);
+        getRenderer().enableEffect(storage.isCudaEnabled,opacityLevel, brightnessLevel, blurType);
         this.opacityLevel = opacityLevel;
         this.brightnessLevel = brightnessLevel;
         this.blurType = blurType;
@@ -74,7 +72,7 @@ public class GlassIdeContext {
 
     public void disableGlassMode() {
         if (isEffectEnabled()) {
-            getRenderer().disableEffect();
+            getRenderer().disable();
         }
     }
 

@@ -22,13 +22,13 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
     // https://mvnrepository.com/artifact/net.java.dev.jna/jna
-    compile group: 'net.java.dev.jna', name: 'jna', version: '5.6.0'
+//    compile group: 'net.java.dev.jna', name: 'jna', version: '5.6.0'
 
 }
-
-test {
-    useJUnitPlatform()
-}
+//
+//test {
+//    useJUnitPlatform()
+//}
 
 sourceSets {
     test {
@@ -48,11 +48,26 @@ task addBinariesToSandbox {
     doLast {
         println 'Adding binaries'
         copy {
-            from file("$projectDir\\..\\CPP\\x64\\Release")
+            from file("$projectDir\\..\\CPP\\x64\\Debug")
             into file("$buildDir\\idea-sandbox\\plugins\\$rootProject.name\\bin")
-            include "GlassIdeRenderer.exe"
+            include "Renderer.exe"
         }
     }
 }
 
 prepareSandbox.finalizedBy(addBinariesToSandbox)
+
+
+task addBinariesToTestingSandbox {
+    doLast {
+        println 'Adding binaries'
+        copy {
+            from file("$projectDir\\..\\CPP\\x64\\Debug")
+            into file("$buildDir\\idea-sandbox\\plugins-test\\$rootProject.name\\bin")
+            include "Renderer.exe"
+        }
+    }
+}
+
+prepareTestingSandbox.finalizedBy(addBinariesToTestingSandbox)
+

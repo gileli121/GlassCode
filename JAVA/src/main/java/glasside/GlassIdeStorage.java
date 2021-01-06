@@ -26,6 +26,7 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
   public int brightnessLevel = 30;
   public int blurType = 0;
   public boolean isEnabled = false;
+  public boolean isCudaEnabled;
 
 
   public static GlassIdeStorage getInstance() {

@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="capture_layer.cpp">
+      <Filter>renderer\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="capture_layer_bitblt.cpp">
+      <Filter>renderer\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="display_layer.cpp">
+      <Filter>renderer\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="graphic_device.cpp">
+      <Filter>renderer\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="process_layer_cpu.cpp">
+      <Filter>renderer\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="capture_layer.h">
+      <Filter>renderer\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="capture_layer_bitblt.h">
+      <Filter>renderer\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="display_layer.h">
+      <Filter>renderer\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="graphic_device.h">
+      <Filter>renderer\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="direct3d11.interop.h">
+      <Filter>renderer\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="process_layer_cpu.h">
+      <Filter>renderer\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="process_layer_gpu.h">
+      <Filter>renderer\layers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="renderer">
+      <UniqueIdentifier>{8a66ec5d-0c60-4c99-84a6-ccfa76837475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderer\helpers">
+      <UniqueIdentifier>{6678c109-7451-4c1b-abd2-0e25d9634d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderer\layers">
+      <UniqueIdentifier>{2116cd15-eb0f-47bb-ad37-a89bfbdd908e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="process_layer_gpu.cu">
+      <Filter>renderer\layers</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>
