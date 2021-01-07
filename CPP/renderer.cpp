@@ -39,7 +39,7 @@ namespace renderer
 	 * \brief The current WINDOWPLACEMENT structure of the window
 	 * (used inside process_window_placement function)
 	 */
-	WINDOWPLACEMENT target_placement = { 0 };
+	WINDOWPLACEMENT target_placement = {0};
 
 	/**
 	 * \brief x_size and y_size of the frame that captured from the window
@@ -369,7 +369,7 @@ namespace renderer
 		{
 			if (glass_mode)
 				process_layer_gpu::glass_effect::enable(glass_background, glass_dark_background, glass_images,
-					glass_texts);
+				                                        glass_texts);
 			else
 				process_layer_gpu::glass_effect::disable();
 		}
@@ -377,7 +377,7 @@ namespace renderer
 		{
 			if (glass_mode)
 				process_layer_cpu::glass_effect::enable(glass_background, glass_dark_background, glass_images,
-					glass_texts);
+				                                        glass_texts);
 			else
 				process_layer_cpu::glass_effect::disable();
 		}
@@ -463,7 +463,7 @@ namespace renderer
 		}
 
 		if (!graphic_device::create_texture(&cpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
-			D3D11_USAGE_STAGING))
+		                                    D3D11_USAGE_STAGING))
 		{
 			std::cout << "Failed to init cpu_texture" << std::endl;
 			return false;
@@ -499,7 +499,7 @@ namespace renderer
 		}
 
 		if (!graphic_device::create_texture(&gpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
-			D3D11_USAGE_STAGING))
+		                                    D3D11_USAGE_STAGING))
 		{
 			std::cout << "Failed to init gpu_texture" << std::endl;
 			if (cpu_texture)
@@ -701,7 +701,7 @@ namespace renderer
 			else
 				Sleep(500);
 
-			capture_layer::TextureData captured_frame = { nullptr };
+			capture_layer::TextureData captured_frame = {nullptr};
 			if (!capture_layer::get_new_frame(&captured_frame))
 				continue;
 
@@ -712,7 +712,7 @@ namespace renderer
 
 				if (was_maximized)
 				{
-					Sleep(1000);
+					//Sleep(1000);
 
 					was_maximized = false;
 					update_size = true;
@@ -858,8 +858,8 @@ namespace renderer
 	 * \return true on success, false on failure
 	 */
 	bool enable_glass_mode(const bool filter_images, const GlassBlurType blur_level, const double brightness_level,
-		const bool dark_background, const double background_level, const double images_level,
-		const double texts_level)
+	                       const bool dark_background, const double background_level, const double images_level,
+	                       const double texts_level)
 	{
 		std::cout << "Enabling glass mode for " << target_hwnd << std::endl;
 		// Set the variables
@@ -909,7 +909,7 @@ namespace renderer
 
 		auto is_mouse_above_target_hwnd = []()
 		{
-			POINT point = { 0 };
+			POINT point = {0};
 			GetCursorPos(&point);
 
 			auto hwnd = WindowFromPoint(point);
@@ -941,9 +941,33 @@ namespace renderer
 	 */
 	bool process_window_placement(bool& placement_changed)
 	{
+		static clock_t was_maximized_timer = 0;
 
 
-		WINDOWPLACEMENT placement_new = { 0 };
+		if (was_maximized_timer && clock() - was_maximized_timer >= 500)
+		{
+			placement_changed = true;
+			window_hidden = false;
+
+
+			std::cout << "Window maximized / restored / showed -> Reloading the layers" << std::endl;
+
+
+			if (!process_frame_thread_exited)
+				un_init_for_target_hwnd();
+
+			if (!init_for_target_hwnd(true))
+				return false;
+
+
+			was_maximized = true;
+			was_maximized_timer = 0;
+			placement_changed = true;
+			return true;
+		}
+
+
+		WINDOWPLACEMENT placement_new = {0};
 		if (!GetWindowPlacement(target_hwnd, &placement_new))
 		{
 			std::cout << "Failed to get window placement. Window may be deleted" << std::endl;
@@ -970,24 +994,11 @@ namespace renderer
 			case SW_RESTORE:
 			case SW_MAXIMIZE:
 
-				placement_changed = true;
-				window_hidden = false;
-
 				if (old_show_cmd == SW_MINIMIZE || old_show_cmd == SW_SHOWMINIMIZED)
 					x_size = y_size = 0; // Prevent some bug when the window restored from minimized state
 
-				std::cout << "Window maximized / restored / showed -> Reloading the layers" << std::endl;
+				was_maximized_timer = clock();
 
-
-				if (!process_frame_thread_exited)
-					un_init_for_target_hwnd();
-
-				if (!init_for_target_hwnd(true))
-					return false;
-
-				// Prevent some another bug with programs like notepad that for some reason
-				// The client area of the window is not maximized after maximize
-				was_maximized = true;
 
 				return true;
 			}
@@ -1030,7 +1041,7 @@ namespace renderer
 				// If they bright, we will run the process frame thread again to render 
 				// the dark mode effect
 
-				RECT target_rect = { 0 };
+				RECT target_rect = {0};
 				DwmGetWindowAttribute(target_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &target_rect, sizeof(RECT));
 
 				const int x_size = target_rect.right - target_rect.left + 1;
