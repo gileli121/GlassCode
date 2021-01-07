@@ -712,7 +712,7 @@ namespace renderer
 
 				if (was_maximized)
 				{
-					//Sleep(1000);
+					Sleep(250); // Disabled for now. May need to re-enable in case there will be bugs about it
 
 					was_maximized = false;
 					update_size = true;
@@ -950,7 +950,7 @@ namespace renderer
 			window_hidden = false;
 
 
-			std::cout << "Window maximized / restored / showed -> Reloading the layers" << std::endl;
+			// std::cout << "Window maximized / restored / showed -> Reloading the layers" << std::endl; 
 
 
 			if (!process_frame_thread_exited)
@@ -970,7 +970,7 @@ namespace renderer
 		WINDOWPLACEMENT placement_new = {0};
 		if (!GetWindowPlacement(target_hwnd, &placement_new))
 		{
-			std::cout << "Failed to get window placement. Window may be deleted" << std::endl;
+			std::cout << "Failed to get window placement. Window may be deleted";
 			return false;
 		}
 
