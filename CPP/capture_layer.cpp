@@ -9,11 +9,12 @@
 #include <DispatcherQueue.h>
 #include <d3d11.h>
 #pragma comment(lib, "D3D11.lib")
-#include <plog/Log.h>
 
 #include "direct3d11.interop.h"
 #include "graphic_device.h"
 #include "capture_layer.h"
+
+#include <iostream>
 
 namespace capture_layer_helpers
 {
@@ -85,7 +86,7 @@ namespace capture_layer
 			options, reinterpret_cast<ABI::Windows::System::IDispatcherQueueController**>(winrt::put_abi(controller)));
 		if (res != S_OK)
 		{
-			PLOGE << "Failed to initialize capture layer, hresult=" << res;
+			std::cout << "Failed to initialize capture layer, hresult=" << res << std::endl;
 			return false;
 		}
 
@@ -185,11 +186,11 @@ namespace capture_layer
 		using namespace capture_layer_helpers;
 
 
-		PLOGI << "Start capturing window " << target_hwnd;
+		std::cout << "Start capturing window " << target_hwnd << std::endl;
 
 		if (!create_capture_item_for_window(target_hwnd, &capture_item))
 		{
-			PLOGE << "Failed to create capture item for window " << target_hwnd;
+			std::cout << "Failed to create capture item for window " << target_hwnd << std::endl;
 			return false;
 		}
 
