@@ -39,7 +39,7 @@ namespace renderer
 	 * \brief The current WINDOWPLACEMENT structure of the window
 	 * (used inside process_window_placement function)
 	 */
-	WINDOWPLACEMENT target_placement = {0};
+	WINDOWPLACEMENT target_placement = { 0 };
 
 	/**
 	 * \brief x_size and y_size of the frame that captured from the window
@@ -170,7 +170,7 @@ namespace renderer
 	 */
 	bool start_processing_wait = false;
 
-	
+
 	bool exit_event_requested = false;
 
 
@@ -192,20 +192,20 @@ namespace renderer
 	{
 		exit_event_requested = true;
 	}
-	
+
 	/**
 	 * \brief Init function that you should call at startup only.
 	 * It setup GPU acceleration if needed and other settings that never change during the
 	 * lifetime of the program.
-	 * \param cuda_acceleration 
-	 * \return true if successful and false on failure 
+	 * \param cuda_acceleration
+	 * \return true if successful and false on failure
 	 */
 	bool init(const bool cuda_acceleration)
 	{
 		std::cout << "Initializing renderer" << std::endl;
 
 		fatal_error = false;
-		
+
 		if (!graphic_device::init_device(cuda_acceleration))
 		{
 			std::cout << "Failed to load_frame graphic device for rendering" << std::endl;
@@ -236,7 +236,7 @@ namespace renderer
 
 	/**
 	 * \brief Set on the window the type of transparency-blur effect
-	 * \param blur_level 
+	 * \param blur_level
 	 */
 	void set_glass_blur_level(const GlassBlurType blur_level)
 	{
@@ -271,7 +271,7 @@ namespace renderer
 	/**
 	 * \brief After the target window has been set, this function used to startup
 	 * the actual re rendering process
-	 * \param wait - Should we wait for few seconds after capture started or not 
+	 * \param wait - Should we wait for few seconds after capture started or not
 	 * \return true on success and false of failure
 	 */
 	bool init_for_target_hwnd(const bool wait = false)
@@ -369,7 +369,7 @@ namespace renderer
 		{
 			if (glass_mode)
 				process_layer_gpu::glass_effect::enable(glass_background, glass_dark_background, glass_images,
-				                                        glass_texts);
+					glass_texts);
 			else
 				process_layer_gpu::glass_effect::disable();
 		}
@@ -377,7 +377,7 @@ namespace renderer
 		{
 			if (glass_mode)
 				process_layer_cpu::glass_effect::enable(glass_background, glass_dark_background, glass_images,
-				                                        glass_texts);
+					glass_texts);
 			else
 				process_layer_cpu::glass_effect::disable();
 		}
@@ -463,7 +463,7 @@ namespace renderer
 		}
 
 		if (!graphic_device::create_texture(&cpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
-		                                    D3D11_USAGE_STAGING))
+			D3D11_USAGE_STAGING))
 		{
 			std::cout << "Failed to init cpu_texture" << std::endl;
 			return false;
@@ -499,7 +499,7 @@ namespace renderer
 		}
 
 		if (!graphic_device::create_texture(&gpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
-		                                    D3D11_USAGE_STAGING))
+			D3D11_USAGE_STAGING))
 		{
 			std::cout << "Failed to init gpu_texture" << std::endl;
 			if (cpu_texture)
@@ -701,7 +701,7 @@ namespace renderer
 			else
 				Sleep(500);
 
-			capture_layer::TextureData captured_frame = {nullptr};
+			capture_layer::TextureData captured_frame = { nullptr };
 			if (!capture_layer::get_new_frame(&captured_frame))
 				continue;
 
@@ -850,16 +850,16 @@ namespace renderer
 	 * \brief Enable glass effect
 	 * \param filter_images - If set to true, it will try to avoid processing images as texts/shapes
 	 * \param blur_level - The type of blur/transparency to set to the window
-	 * \param brightness_level 
-	 * \param dark_background 
-	 * \param background_level 
-	 * \param images_level 
-	 * \param texts_level 
+	 * \param brightness_level
+	 * \param dark_background
+	 * \param background_level
+	 * \param images_level
+	 * \param texts_level
 	 * \return true on success, false on failure
 	 */
 	bool enable_glass_mode(const bool filter_images, const GlassBlurType blur_level, const double brightness_level,
-	                       const bool dark_background, const double background_level, const double images_level,
-	                       const double texts_level)
+		const bool dark_background, const double background_level, const double images_level,
+		const double texts_level)
 	{
 		std::cout << "Enabling glass mode for " << target_hwnd << std::endl;
 		// Set the variables
@@ -909,12 +909,12 @@ namespace renderer
 
 		auto is_mouse_above_target_hwnd = []()
 		{
-			POINT point = {0};
+			POINT point = { 0 };
 			GetCursorPos(&point);
 
 			auto hwnd = WindowFromPoint(point);
 			if (!hwnd) return false;
-			
+
 			hwnd = GetAncestor(hwnd, GA_ROOT);
 
 			return hwnd == target_hwnd;
@@ -942,8 +942,8 @@ namespace renderer
 	bool process_window_placement(bool& placement_changed)
 	{
 
-		
-		WINDOWPLACEMENT placement_new = {0};
+
+		WINDOWPLACEMENT placement_new = { 0 };
 		if (!GetWindowPlacement(target_hwnd, &placement_new))
 		{
 			std::cout << "Failed to get window placement. Window may be deleted" << std::endl;
@@ -1030,7 +1030,7 @@ namespace renderer
 				// If they bright, we will run the process frame thread again to render 
 				// the dark mode effect
 
-				RECT target_rect = {0};
+				RECT target_rect = { 0 };
 				DwmGetWindowAttribute(target_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &target_rect, sizeof(RECT));
 
 				const int x_size = target_rect.right - target_rect.left + 1;
@@ -1079,7 +1079,7 @@ namespace renderer
 			exit_event_requested = false;
 			return false;
 		}
-		
+
 		adjust_processing_speed();
 
 		auto placement_changed = false;

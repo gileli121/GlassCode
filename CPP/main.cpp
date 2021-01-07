@@ -33,7 +33,7 @@ LRESULT CALLBACK window_proc(
 #ifndef _DEBUG
 HWND target_hwnd = nullptr;
 #else
-HWND target_hwnd = reinterpret_cast<HWND>(0x00000000003F0F20);
+HWND target_hwnd = reinterpret_cast<HWND>(0x00000000007C094C);
 #endif
 
 bool is_cuda_enabled = false;

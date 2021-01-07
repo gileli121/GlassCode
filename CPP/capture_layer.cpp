@@ -9,18 +9,16 @@
 #include <DispatcherQueue.h>
 #include <d3d11.h>
 #pragma comment(lib, "D3D11.lib")
-
+#include <plog/Log.h>
 
 #include "direct3d11.interop.h"
 #include "graphic_device.h"
 #include "capture_layer.h"
 
-#include <iostream>
-
 namespace capture_layer_helpers
 {
 	bool create_capture_item_for_window_internal(const HWND hwnd, IGraphicsCaptureItemInterop* interop_factory,
-	                                             winrt::Windows::Graphics::Capture::GraphicsCaptureItem* item)
+		winrt::Windows::Graphics::Capture::GraphicsCaptureItem* item)
 	{
 		_COM_Outptr_ const auto result = reinterpret_cast<void**>(winrt::put_abi(*item));
 
@@ -39,7 +37,7 @@ namespace capture_layer_helpers
 	}
 
 	inline auto create_capture_item_for_window(const HWND hwnd,
-	                                           winrt::Windows::Graphics::Capture::GraphicsCaptureItem* item)
+		winrt::Windows::Graphics::Capture::GraphicsCaptureItem* item)
 	{
 		const auto activation_factory = winrt::get_activation_factory<
 			winrt::Windows::Graphics::Capture::GraphicsCaptureItem>();
@@ -60,39 +58,40 @@ namespace capture_layer
 	TextureData texture_data;
 
 	// WinRT stuff for the logic that used to capture with Win 10 API
-	winrt::Windows::Graphics::Capture::GraphicsCaptureItem capture_item = {nullptr};
+	winrt::Windows::Graphics::Capture::GraphicsCaptureItem capture_item = { nullptr };
 	winrt::Windows::Graphics::SizeInt32 capture_last_size;
 	winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool::FrameArrived_revoker frame_arrived_revoker;
 
 
 	// The 3d device stuff that used for the logic to get the captured data as ID3D11Texture2D
-	winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool frame_pool{nullptr};
-	winrt::Windows::Graphics::Capture::GraphicsCaptureSession capture_session{nullptr};
+	winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool frame_pool{ nullptr };
+	winrt::Windows::Graphics::Capture::GraphicsCaptureSession capture_session{ nullptr };
 
 	bool new_frame = false;
 	bool first_frame = true;
 	bool is_closed = true;
+	clock_t resize_frame_timer = 0;
 
+	
 	//bool capturing = false; // Moved to global
 
 	bool init()
 	{
 		init_apartment(winrt::apartment_type::single_threaded);
 
-		winrt::Windows::System::DispatcherQueueController controller{nullptr};
-		const DispatcherQueueOptions options{sizeof(DispatcherQueueOptions), DQTYPE_THREAD_CURRENT, DQTAT_COM_STA};
+		winrt::Windows::System::DispatcherQueueController controller{ nullptr };
+		const DispatcherQueueOptions options{ sizeof(DispatcherQueueOptions), DQTYPE_THREAD_CURRENT, DQTAT_COM_STA };
 		const auto res = CreateDispatcherQueueController(
 			options, reinterpret_cast<ABI::Windows::System::IDispatcherQueueController**>(winrt::put_abi(controller)));
 		if (res != S_OK)
 		{
-			std::cout << "Failed to initialize capture layer, hresult=" << res << std::endl;
+			PLOGE << "Failed to initialize capture layer, hresult=" << res;
 			return false;
 		}
 
 		return true;
 	}
 
-	void stop_capture_session();
 
 	void callback_on_frame_arrived(
 		winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool const& sender,
@@ -106,7 +105,6 @@ namespace capture_layer
 		timer = clock();
 #endif
 
-		using namespace winrt;
 		using namespace winrt::Windows::Graphics::DirectX;
 		using namespace winrt::Windows::Graphics::DirectX::Direct3D11;
 		using namespace capture_layer_helpers;
@@ -117,33 +115,45 @@ namespace capture_layer
 
 		new_size = false;
 		if (frame_content_size.Width != capture_last_size.Width || frame_content_size.Height != capture_last_size.Height
-		)
+			)
 		{
-			stop_capture_session();
-			//new_size = true;
+			if (first_frame)
+			{
+				new_size = true;
+				first_frame = false;
+			}
+			else
+			{
+				resize_frame_timer = clock();
+				capture_last_size = frame_content_size;
+			}
+
 		}
-		else if (first_frame)
+		else if (resize_frame_timer && clock() - resize_frame_timer > 250)
 		{
+			resize_frame_timer = 0;
 			new_size = true;
-			first_frame = false;
 		}
 
+		
 
 		if (new_size)
 		{
 			// The thing we have been capturing has changed size.
 			// We need to resize our swap chain first, then blit the pixels.
 			// After we do that, retire the frame and then recreate our frame pool.
-			capture_last_size = frame_content_size;
+			
 			graphic_device::resize_swap_chain(capture_last_size.Width, capture_last_size.Height);
+			texture_data.x_size = capture_last_size.Width;
+			texture_data.y_size = capture_last_size.Height;
 		}
+
 
 		const auto frame_surface = direct3d11_interop::GetDXGIInterfaceFromObject<ID3D11Texture2D>(frame.Surface());
 
 
 		texture_data.textrue = frame_surface.get();
-		texture_data.x_size = capture_last_size.Width;
-		texture_data.y_size = capture_last_size.Height;
+
 
 		new_frame = true;
 
@@ -152,8 +162,8 @@ namespace capture_layer
 		{
 			if (!create_capture_item_for_window(target_hwnd, &capture_item))
 				return;
-
-
+			
+			
 			frame_pool.Recreate(
 				graphic_device::device,
 				DirectXPixelFormat::B8G8R8A8UIntNormalized,
@@ -175,11 +185,11 @@ namespace capture_layer
 		using namespace capture_layer_helpers;
 
 
-		std::cout << "Start capturing window " << target_hwnd << std::endl;
+		PLOGI << "Start capturing window " << target_hwnd;
 
 		if (!create_capture_item_for_window(target_hwnd, &capture_item))
 		{
-			std::cout << "Failed to create capture item for window " << target_hwnd << std::endl;
+			PLOGE << "Failed to create capture item for window " << target_hwnd;
 			return false;
 		}
 
@@ -227,23 +237,23 @@ namespace capture_layer
 		// stop_capture_session();
 
 #if 1 // I gave up.. there is no way to dispose this shit. It will just crash... 
-		capture_last_size = {0};
-		
+		capture_last_size = { 0 };
+
 		if (!is_closed)
 		{
 			frame_arrived_revoker.revoke();
 			is_closed = true;
 		}
-		
+
 		if (capturing)
 		{
 			stop_capture_session();
 		}
-		
+
 		frame_pool = nullptr;
 		capture_session = nullptr;
 		capture_item = nullptr;
-		texture_data = {nullptr};
+		texture_data = { nullptr };
 		capturing = false;
 		new_frame = false;
 		first_frame = true;
@@ -254,7 +264,7 @@ namespace capture_layer
 	{
 		// dispose();
 		// create_layer();
-		
+
 		start_capture_session();
 	}
 
