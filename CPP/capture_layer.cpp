@@ -89,7 +89,9 @@ namespace capture_layer
 			options, reinterpret_cast<ABI::Windows::System::IDispatcherQueueController**>(winrt::put_abi(controller)));
 		if (res != S_OK)
 		{
-			std::cout << "Failed to initialize capture layer, hresult=" << res << std::endl;
+			std::cout << "Failed to initialize capture layer, hresult=";
+			std::cout << res;
+			std::cout << std::endl;
 			return false;
 		}
 
@@ -146,8 +148,7 @@ namespace capture_layer
 			// After we do that, retire the frame and then recreate our frame pool.
 
 			graphic_device::resize_swap_chain(capture_last_size.Width, capture_last_size.Height);
-			texture_data.x_size = capture_last_size.Width;
-			texture_data.y_size = capture_last_size.Height;
+
 		}
 
 
@@ -155,7 +156,8 @@ namespace capture_layer
 
 
 		texture_data.textrue = frame_surface.get();
-
+		texture_data.x_size = capture_last_size.Width;
+		texture_data.y_size = capture_last_size.Height;
 
 		new_frame = true;
 
@@ -186,19 +188,18 @@ namespace capture_layer
 		using namespace capture_layer_helpers;
 
 
-		std::cout << "Start capturing window " << target_hwnd << std::endl;
+		std::cout << "Start capturing window\n";
 
 		if (!create_capture_item_for_window(target_hwnd, &capture_item))
 		{
-			std::cout << "Failed to create capture item for window " << target_hwnd << std::endl;
+			std::cout << "Failed to create capture item for window\n";
 			return false;
 		}
 
 		RECT target_rect = {0};
 		if (DwmGetWindowAttribute(target_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &target_rect, sizeof(RECT)) != S_OK)
 		{
-			std::cout << "DwmGetWindowAttribute(*) failed while trying to get the size of the capture frame" <<
-				std::endl;
+			std::cout << "DwmGetWindowAttribute(*) failed while trying to get the size of the capture frame\n";
 			return false;
 		}
 
@@ -268,17 +269,12 @@ namespace capture_layer
 #endif
 	}
 
-	void reload()
-	{
-		// dispose();
-		// create_layer();
-
-		start_capture_session();
-	}
-
 	bool get_new_frame(TextureData* texture_data)
 	{
 		if (!new_frame)
+			return false;
+
+		if (capture_layer::texture_data.x_size <= 0 && capture_layer::texture_data.y_size <= 0)
 			return false;
 
 		new_frame = true;
