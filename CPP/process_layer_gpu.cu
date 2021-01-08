@@ -443,9 +443,16 @@ namespace process_layer_gpu
 				g *= scalar;
 				r *= scalar;
 
-				if (b > 255) b = 255;
-				if (g > 255) g = 255;
-				if (r > 255) r = 255;
+				auto max = r > g ? r : g;
+				if (b > max) max = b;
+
+				if (max > 255)
+				{
+					const auto reduce_scalar = 255 / static_cast<float>(max);
+					b *= reduce_scalar;
+					g *= reduce_scalar;
+					r *= reduce_scalar;
+				}
 
 
 				pixels[thread_point] = b;
