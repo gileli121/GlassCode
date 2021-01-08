@@ -20,6 +20,5 @@ namespace capture_layer
 	bool create_layer();
 	void start_capture_session();
 	void dispose();
-	void reload();
 	bool get_new_frame(TextureData* texture_data);
 }
