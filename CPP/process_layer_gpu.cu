@@ -458,7 +458,7 @@ namespace process_layer_gpu
 		bool map_shapes()
 		{
 			cudaError_t cuda_result;
-			if (images_level < 1.0)
+			if (images_level < 1.0 && d_image_area_data)
 			{
 				kernel_perform_images_opacity
 					<< < ((y_end) * (x_end) * 4) / GLASS_MODE_WARP_SIZE, GLASS_MODE_WARP_SIZE >> >
