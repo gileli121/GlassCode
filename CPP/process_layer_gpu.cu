@@ -296,14 +296,11 @@ namespace process_layer_gpu
 		                                   bool* image_area_data, const float texts_level,
 		                                   const float background_level, const bool dark_background)
 		{
-			auto block_x = (blockIdx.x * GLASS_MODE_WARP_SIZE_SQRT) % x_end;
-			block_x -= block_x % GLASS_MODE_WARP_SIZE_SQRT;
+			const auto block_x = (blockIdx.x % x_reduced) * GLASS_MODE_WARP_SIZE_SQRT;
 			const auto thread_x = threadIdx.x % GLASS_MODE_WARP_SIZE_SQRT;
 			if (block_x + thread_x >= x_end) return;
 
-
-			auto block_y = ((blockIdx.x * GLASS_MODE_WARP_SIZE_SQRT) / x_end) * GLASS_MODE_WARP_SIZE_SQRT;
-			block_y -= block_y % GLASS_MODE_WARP_SIZE_SQRT;
+			const auto block_y = (blockIdx.x / x_reduced) * GLASS_MODE_WARP_SIZE_SQRT;
 			const auto thread_y = threadIdx.x / GLASS_MODE_WARP_SIZE_SQRT;
 			if (block_y + thread_y >= y_end) return;
 
@@ -319,7 +316,6 @@ namespace process_layer_gpu
 			const auto x_point = thread_point % x_end;
 
 			thread_point *= 4;
-
 
 			__shared__ int avg_shapes_avg_color;
 			__shared__ int avg_shapes_count;
