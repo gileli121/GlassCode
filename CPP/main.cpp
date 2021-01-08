@@ -33,7 +33,7 @@ LRESULT CALLBACK window_proc(
 #ifndef _DEBUG
 HWND target_hwnd = nullptr;
 #else
-HWND target_hwnd = reinterpret_cast<HWND>(0x00000000007C094C);
+HWND target_hwnd = reinterpret_cast<HWND>(0x00000000002B0748);
 #endif
 
 bool is_cuda_enabled = false;
@@ -68,33 +68,33 @@ int main(const int argc, char* argv[])
 	#endif
 
 
-	std::cout << "Checking arguments" << std::endl;
+	std::cout << "Checking arguments\n";
 	if (!target_hwnd)
 	{
-		std::cout << "Invalid window handle provided" << std::endl;
+		std::cout << "Invalid window handle provided\n";
 		return EXIT_FAILURE;
 	}
 
 	if (opacity_level < 0 || opacity_level > 100)
 	{
-		std::cout << "Invalid opacity level provided" << std::endl;
+		std::cout << "Invalid opacity level provided\n";
 		return EXIT_FAILURE;
 	}
 
 	if (brightness_level < 0 || brightness_level > 100)
 	{
-		std::cout << "Invalid brightness level provided" << std::endl;
+		std::cout << "Invalid brightness level provided\n";
 		return EXIT_FAILURE;
 	}
 
 	if (blur_type < 0 || blur_type > 2)
 	{
-		std::cout << "Invalid blur type provided" << std::endl;
+		std::cout << "Invalid blur type provided\n";
 		return EXIT_FAILURE;
 	}
 
 
-	std::cout << "Creating messages-only window" << std::endl;
+	std::cout << "Creating messages-only window\n";
 
 	auto create_message_only_window = [&]()
 	{
@@ -106,7 +106,7 @@ int main(const int argc, char* argv[])
 		wx.lpszClassName = class_name;
 		if (!RegisterClassEx(&wx))
 		{
-			std::cout << "Failed to register class for message-only window" << std::endl;
+			std::cout << "Failed to register class for message-only window\n";
 			return static_cast<HWND>(nullptr);
 		}
 
@@ -119,10 +119,10 @@ int main(const int argc, char* argv[])
 	auto msg_window = create_message_only_window();
 	std::cout << "MSG_WINDOW=" << msg_window << std::endl;
 
-	std::cout << "Creating a renderer window for the target window" << std::endl;
+	std::cout << "Creating a renderer window for the target window\n";
 	if (!renderer::init(is_cuda_enabled))
 	{
-		std::cout << "Failed to init_frame the renderer" << std::endl;
+		std::cout << "Failed to init_frame the renderer\n";
 		return EXIT_FAILURE;
 	}
 
@@ -138,7 +138,7 @@ int main(const int argc, char* argv[])
 			0.0
 		))
 	{
-		std::cout << "Failed to enable glass mode" << std::endl;
+		std::cout << "Failed to enable glass mode\n";
 		return EXIT_FAILURE;
 	}
 

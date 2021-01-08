@@ -112,7 +112,7 @@ namespace display_layer
 
 	bool init()
 	{
-		std::cout << "Initializing display_layer" << std::endl;
+		std::cout << "Initializing display_layer\n";
 
 		instance = GetModuleHandle(NULL);
 
@@ -134,7 +134,7 @@ namespace display_layer
 
 		if (!RegisterClassEx(&wndclassex))
 		{
-			std::cout << "Failed to register window class" << std::endl;
+			std::cout << "Failed to register window class\n";
 			return false;
 		}
 
@@ -144,6 +144,11 @@ namespace display_layer
 
 	void dispose()
 	{
+		// display_compositor.Close();
+		// container_root.Close();
+		// desktop_window_target.Close();
+		// render_element.Close();
+		// brush.Close();
 		DestroyWindow(display_hwnd_mask);
 		DestroyWindow(display_hwnd2);
 		DestroyWindow(display_hwnd);
@@ -198,7 +203,9 @@ namespace display_layer
 		const auto res = DwmGetWindowAttribute(target_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &target_rect, sizeof(RECT));
 		if (res != S_OK)
 		{
-			std::cout << "Failed to get window size for " << target_hwnd << " , HRESULT=" << res << std::endl;
+			std::stringstream ss;
+			ss << "Failed to get window size for " << target_hwnd << " , HRESULT=" << res << std::endl;
+			std::cout << ss.str();
 			return false;
 		}
 
@@ -208,6 +215,7 @@ namespace display_layer
 
 	void move_layer_to_target()
 	{
+		
 		SetWindowPos
 		(
 			display_hwnd,
@@ -246,22 +254,22 @@ namespace display_layer
 
 	bool create_layer()
 	{
-		std::cout << "Creating layer" << std::endl;
+		std::cout << "Creating layer\n";
 
 		if (!update_target_rect())
 		{
-			std::cout << "Failed to get the size and position of the target window " << target_hwnd << std::endl;
+			std::cout << "Failed to get the size and position of the target window\n";
 			return false;
 		}
 
-		display_hwnd = CreateWindowEx(WS_EX_NOACTIVATE | 0x080000 | WS_EX_TRANSPARENT | WS_EX_LAYERED, class_name,
-		                              nullptr, 0x80000000,
+		display_hwnd = CreateWindowEx(WS_EX_NOACTIVATE | 0x080000 | WS_EX_TRANSPARENT | WS_EX_LAYERED , class_name,
+		                              nullptr, 0x80000000 | WS_POPUP,
 		                              target_rect.top, target_rect.left, target_rect.right - target_rect.left,
 		                              target_rect.bottom - target_rect.top, target_hwnd, nullptr, instance, nullptr);
 
 		if (!display_hwnd)
 		{
-			std::cout << "Failed to create layer window for " << target_hwnd << std::endl;
+			std::cout << "Failed to create layer window\n";
 			return false;
 		}
 
@@ -270,15 +278,15 @@ namespace display_layer
 
 
 		display_hwnd_mask = CreateWindowEx(
-			WS_EX_NOACTIVATE | 0x080000 | WS_EX_TRANSPARENT | WS_EX_LAYERED /*| WS_EX_TOPMOST*/, class_name, nullptr,
-			0x80000000,
+			WS_EX_NOACTIVATE | 0x080000 | WS_EX_TRANSPARENT | WS_EX_LAYERED /*| WS_EX_TOPMOST*/ , class_name, nullptr,
+			0x80000000 | WS_POPUP,
 			0, 0, target_rect.right - target_rect.left, target_rect.bottom - target_rect.top, display_hwnd, nullptr,
 			instance, nullptr);
 		ShowWindow(display_hwnd_mask, SW_SHOWNOACTIVATE);
 
 		display_hwnd2 = CreateWindowEx(
-			WS_EX_NOACTIVATE | 0x080000 | WS_EX_TRANSPARENT | WS_EX_LAYERED /*| WS_EX_TOPMOST*/, class_name, nullptr,
-			0x80000000,
+			WS_EX_NOACTIVATE | 0x080000 | WS_EX_TRANSPARENT | WS_EX_LAYERED /*| WS_EX_TOPMOST*/ , class_name, nullptr,
+			0x80000000 | WS_POPUP,
 			0, 0, target_rect.right - target_rect.left, target_rect.bottom - target_rect.top, display_hwnd_mask,
 			nullptr, instance, nullptr);
 		ShowWindow(display_hwnd2, SW_SHOWNOACTIVATE);
@@ -311,7 +319,6 @@ namespace display_layer
 
 
 		container_root = display_compositor.CreateContainerVisual();
-		container_root.RelativeSizeAdjustment({1.0f, 1.0f});
 		desktop_window_target.Root(container_root);
 
 
@@ -329,7 +336,7 @@ namespace display_layer
 		render_element.Brush(brush);
 		brush.HorizontalAlignmentRatio(0.5f);
 		brush.VerticalAlignmentRatio(0.5f);
-		brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::Uniform);
+		brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::None);
 
 		// Add the render element to the container root
 		container_root.Children().InsertAtTop(render_element);
@@ -338,6 +345,7 @@ namespace display_layer
 		return true;
 	}
 
+	
 	void set_layer_to_foreground()
 	{
 		// Move the display layer in z-order to be above the target window
@@ -350,11 +358,11 @@ namespace display_layer
 	{
 		using namespace display_layer_helpers;
 
-		std::cout << "Initializing screen buffer for window " << target_hwnd << std::endl;
+		//std::cout << "Initializing screen buffer for window\n";
 
 		if (graphic_device::swap_chain)
 		{
-			std::cout << "Deleting existing swap chain" << std::endl;
+			std::cout << "Deleting existing swap chain\n";
 			graphic_device::delete_swap_chain();
 		}
 
@@ -364,7 +372,7 @@ namespace display_layer
 		// Option 2 to create the swap chain - did not work perfect .....
 		if (!graphic_device::create_swap_chain(buffer.x_size, buffer.y_size))
 		{
-			std::cout << "Failed to create swap chain for display layer" << std::endl;
+			std::cout << "Failed to create swap chain for display layer\n";
 		}
 
 

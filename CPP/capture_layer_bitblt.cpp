@@ -35,7 +35,7 @@ namespace capture_layer_bitblt
 
 	bool create_capture_buffer(const int x_size, const int y_size)
 	{
-		std::cout << "Creating capture buffer" << std::endl;
+		std::cout << "Creating capture buffer\n";
 
 		if (bitmap_src)
 		{
@@ -62,7 +62,7 @@ namespace capture_layer_bitblt
 		old_object = SelectObject(hdc_rect, bitmap_src);
 		if (!old_object)
 		{
-			std::cout << "Failed to create capture buffer" << std::endl;
+			std::cout << "Failed to create capture buffer\n";
 			un_init_capture();
 			return false;
 		}
