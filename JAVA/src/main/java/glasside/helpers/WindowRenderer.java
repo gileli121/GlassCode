@@ -24,7 +24,6 @@ public class WindowRenderer {
     private Process rendererProcess = null;
     private long rendererMsgWindow = 0;
     private WinDef.HWND rendererMsgHwnd = null;
-    private String rendererLastLogs = "";
     private boolean isRendererRunning = false;
     private boolean isCudaEnabled = false;
 
@@ -77,13 +76,14 @@ public class WindowRenderer {
                         "Renderer Logs: " + rendererLogs +
                         "Exception: " + e.getMessage());
             }
+
+
         }
 
-        // Get the hwnd communication window from the renderer process
+//         Get the hwnd communication window from the renderer process
         {
             BufferedReader reader =
                     new BufferedReader(new InputStreamReader(rendererProcess.getInputStream()));
-            StringBuilder builder = new StringBuilder();
             String line;
             try {
                 while ((line = reader.readLine()) != null) {
@@ -91,12 +91,7 @@ public class WindowRenderer {
                         rendererMsgWindow = Long.parseLong(line.replace("MSG_WINDOW=", ""), 16);
                         break;
                     }
-                    builder.append(line);
-                    builder.append(System.lineSeparator());
                 }
-                rendererLastLogs += System.lineSeparator() + builder.toString();
-
-
             } catch (Exception e) {
                 if (rendererProcess.isAlive())
                     rendererProcess.destroy();
@@ -116,6 +111,19 @@ public class WindowRenderer {
                 rendererMsgHwnd = new WinDef.HWND(Pointer.createConstant(rendererMsgWindow));
             }
         }
+
+
+        // Need it to fix bug that sometimes the IDE process if frozen for some reason. This fix the issue
+        try {
+            rendererProcess.getOutputStream().close();
+            rendererProcess.getInputStream().close();
+            rendererProcess.getErrorStream().close();
+        } catch (IOException e) {
+            rendererProcess.destroy();
+            throw new RuntimeException("Failed to detach from output stream of the Renderer process");
+            // TODO: Logic to restore the window opacity
+        }
+
 
     }
 
@@ -189,25 +197,7 @@ public class WindowRenderer {
     }
 
     private String getRendererLogs() {
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(rendererProcess.getInputStream()));
-        StringBuilder builder = new StringBuilder();
-        String line = null;
-        boolean foundText = false;
-        try {
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-                builder.append(System.getProperty("line.separator"));
-                foundText = true;
-            }
-            if (foundText)
-                rendererLastLogs += builder.toString();
-
-            return rendererLastLogs;
-        } catch (IOException e) {
-            rendererLastLogs = null;
-            return "Failed to get Renderer.exe logs";
-        }
+        return "Error: Getting renderer logs was not implemented yet";
     }
 
     private static Path getRendererPath() {
