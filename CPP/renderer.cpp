@@ -59,11 +59,6 @@ namespace renderer
 	ID3D11Texture2D* gpu_texture = nullptr;
 
 	/**
-	 * \brief Indicates if the window was just maximized (used in process_frame_thread function)
-	 */
-	bool was_maximized = false;
-
-	/**
 	 * \brief Indicates if dark mode is enabled
 	 */
 	bool dark_mode = false;
@@ -157,6 +152,11 @@ namespace renderer
 	 */
 	clock_t force_render_timer = 0;
 
+	/**
+	 * \brief While the window is maximized we use this timer to wait a bit before recreating/resizing
+	 * the frame
+	 */
+	clock_t was_maximized_timer = 0;
 
 	/**
 	 * \brief Indicates if functions process_frame_in_gpu or process_frame_in_cpu should
@@ -171,6 +171,9 @@ namespace renderer
 	bool start_processing_wait = false;
 
 
+	/**
+	 * \brief This flag is used by register_exit_event() to exit and dispose the renderer in thread-safe way
+	 */
 	bool exit_event_requested = false;
 
 
@@ -188,6 +191,10 @@ namespace renderer
 		return fatal_error;
 	}
 
+	/**
+	 * \brief Register request to exit and dispose the renderer in the future
+	 * in thread-safe way
+	 */
 	void register_exit_event()
 	{
 		exit_event_requested = true;
@@ -202,13 +209,13 @@ namespace renderer
 	 */
 	bool init(const bool cuda_acceleration)
 	{
-		std::cout << "Initializing renderer" << std::endl;
+		std::cout << "Initializing renderer\n";
 
 		fatal_error = false;
 
 		if (!graphic_device::init_device(cuda_acceleration))
 		{
-			std::cout << "Failed to load_frame graphic device for rendering" << std::endl;
+			std::cout << "Failed to load_frame graphic device for rendering\n";
 			return false;
 		}
 
@@ -221,13 +228,13 @@ namespace renderer
 
 		if (!display_layer::init())
 		{
-			std::cout << "Failed to load_frame display_layer" << std::endl;
+			std::cout << "Failed to load_frame display_layer\n";
 			return false;
 		}
 
 		if (!capture_layer::init())
 		{
-			std::cout << "Failed to load_frame capture_layer" << std::endl;
+			std::cout << "Failed to load_frame capture_layer\n";
 			return false;
 		}
 
@@ -278,18 +285,20 @@ namespace renderer
 	{
 		if (rendering) return true;
 
-		std::cout << "Init renderer for " << target_hwnd << std::endl;
+		std::cout << "Init renderer target window\n";
 
 		if (!GetWindowPlacement(target_hwnd, &target_placement))
 		{
-			std::cout << "Failed to get window placement, Error: " << GetLastError() << std::endl;
+			std::stringstream ss;
+			ss << "Failed to get window placement, Error: " << GetLastError() << std::endl;;
+			std::cout << ss.str();
 			return false;
 		}
 
 		// Create the display layer
 		if (!display_layer::create_layer())
 		{
-			std::cout << "Failed to create capture layer" << std::endl;
+			std::cout << "Failed to create capture layer\n";
 			return false;
 		}
 
@@ -298,7 +307,7 @@ namespace renderer
 		{
 			if (!display_layer::set_target_window_transparent())
 			{
-				std::cout << "Failed to set target window transparent" << std::endl;
+				std::cout << "Failed to set target window transparent\n";
 				display_layer::dispose();
 				return false;
 			}
@@ -309,7 +318,7 @@ namespace renderer
 		// TODO: Maybe I should remove it
 		if (!display_layer::create_screen_buffer())
 		{
-			std::cout << "Failed to create screen buffer for display layer" << std::endl;
+			std::cout << "Failed to create screen buffer for display layer\n";
 			return false;
 		}
 
@@ -327,7 +336,7 @@ namespace renderer
 		// Create the capture layer
 		if (!capture_layer::create_layer())
 		{
-			std::cout << "Failed to create capture layer" << std::endl;
+			std::cout << "Failed to create capture layer\n";
 			return false;
 		}
 
@@ -354,7 +363,7 @@ namespace renderer
 				process_layer_cpu::enable_cache_buffer(false);
 				if (!process_layer_gpu::enable_cache_buffer(true))
 				{
-					std::cout << "process_layer_gpu::enable_cache_buffer(true) failed" << std::endl;
+					std::cout << "process_layer_gpu::enable_cache_buffer(true) failed\n";
 					return false;
 				}
 			}
@@ -465,7 +474,7 @@ namespace renderer
 		if (!graphic_device::create_texture(&cpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 		                                    D3D11_USAGE_STAGING))
 		{
-			std::cout << "Failed to init cpu_texture" << std::endl;
+			std::cout << "Failed to init cpu_texture\n";
 			return false;
 		}
 
@@ -488,7 +497,7 @@ namespace renderer
 	{
 		if (!init_cpu_process_mode(captured_texture))
 		{
-			std::cout << "init_cpu_process_mode(*) failed" << std::endl;
+			std::cout << "init_cpu_process_mode(*) failed\n";
 			return false;
 		}
 
@@ -501,7 +510,7 @@ namespace renderer
 		if (!graphic_device::create_texture(&gpu_texture, D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 		                                    D3D11_USAGE_STAGING))
 		{
-			std::cout << "Failed to init gpu_texture" << std::endl;
+			std::cout << "Failed to init gpu_texture\n";
 			if (cpu_texture)
 			{
 				cpu_texture->Release();
@@ -537,7 +546,7 @@ namespace renderer
 
 			if (!process_layer_cpu::begin_process(cpu_texture, x_size, y_size))
 			{
-				std::cout << "process_layer_cpu::begin_process(*) failed" << std::endl;
+				std::cout << "process_layer_cpu::begin_process(*) failed\n";
 				return false; // Signal fatal error
 			}
 
@@ -563,7 +572,7 @@ namespace renderer
 
 		if (!process_layer_gpu::begin_process(gpu_texture, x_size, y_size))
 		{
-			std::cout << "process_layer_gpu::begin_process(*) failed" << std::endl;
+			std::cout << "process_layer_gpu::begin_process(*) failed\n";
 			return false; // Signal fatal error
 		}
 
@@ -573,7 +582,7 @@ namespace renderer
 			new_frame = force_render || process_layer_gpu::is_new_pixels(error);
 			if (error)
 			{
-				std::cout << "process_layer_gpu::is_new_pixels(error) failed" << std::endl;
+				std::cout << "process_layer_gpu::is_new_pixels(error) failed\n";
 				return false; // Signal fatal error
 			}
 
@@ -603,7 +612,7 @@ namespace renderer
 
 			if (!process_layer_gpu::invert_colors())
 			{
-				std::cout << "process_layer_gpu::invert_colors(*) failed" << std::endl;
+				std::cout << "process_layer_gpu::invert_colors(*) failed\n";
 				process_layer_gpu::end_process();
 				return false; // Signal fatal error
 			}
@@ -639,7 +648,7 @@ namespace renderer
 
 		if (!process_layer_cpu::begin_process(cpu_texture, x_size, y_size))
 		{
-			std::cout << "process_layer_cpu::begin_process(*) failed" << std::endl;
+			std::cout << "process_layer_cpu::begin_process(*) failed\n";
 			return false; // Signal fatal error
 		}
 
@@ -696,6 +705,10 @@ namespace renderer
 
 		while (run_process_frame_thread && continue_run)
 		{
+
+			if (was_maximized_timer)
+				break;
+			
 			if (is_target_window_in_use)
 				Sleep(1);
 			else
@@ -704,32 +717,20 @@ namespace renderer
 			capture_layer::TextureData captured_frame = {nullptr};
 			if (!capture_layer::get_new_frame(&captured_frame))
 				continue;
-
+			
 			auto update_size = false;
+
 			if (x_size != captured_frame.x_size || y_size != captured_frame.y_size)
 			{
 				force_render_timer = clock();
+				
 
-				if (was_maximized)
+				if (resize_timer == 0)
 				{
-					Sleep(250); // Disabled for now. May need to re-enable in case there will be bugs about it
-
-					was_maximized = false;
-					update_size = true;
+					display_layer::hide_target_hwnd();
+					window_temporary_hidden = true;
 				}
-				else if (x_size <= 0 && y_size <= 0)
-				{
-					update_size = true;
-				}
-				else
-				{
-					if (resize_timer == 0)
-					{
-						display_layer::hide_target_hwnd();
-						window_temporary_hidden = true;
-					}
-					resize_timer = clock();
-				}
+				resize_timer = clock();
 
 				x_size = captured_frame.x_size;
 				y_size = captured_frame.y_size;
@@ -759,7 +760,7 @@ namespace renderer
 				{
 					if (!init_gpu_process_mode(captured_frame.textrue))
 					{
-						std::cout << "init_gpu_process_mode(*) failed" << std::endl;
+						std::cout << "init_gpu_process_mode(*) failed\n";
 						fatal_error = true;
 					}
 				}
@@ -767,7 +768,7 @@ namespace renderer
 				{
 					if (!init_cpu_process_mode(captured_frame.textrue))
 					{
-						std::cout << "init_cpu_process_mode(*) failed" << std::endl;
+						std::cout << "init_cpu_process_mode(*) failed\n";
 						fatal_error = true;
 					}
 				}
@@ -828,7 +829,7 @@ namespace renderer
 	 */
 	void enable_dark_mode(const bool filter_images)
 	{
-		std::cout << "Enabling dark mode for " << target_hwnd << std::endl;
+		std::cout << "Enabling dark mode\n";
 		startup_rendering = true;
 		renderer::filter_images = filter_images;
 		brightness_check_timer = clock();
@@ -840,7 +841,7 @@ namespace renderer
 	 */
 	void disable_dark_mode()
 	{
-		std::cout << "Disabling dark mode for " << target_hwnd << std::endl;
+		std::cout << "Disabling dark mode\n";
 		un_init_for_target_hwnd();
 		dark_mode = false;
 	}
@@ -861,7 +862,7 @@ namespace renderer
 	                       const bool dark_background, const double background_level, const double images_level,
 	                       const double texts_level)
 	{
-		std::cout << "Enabling glass mode for " << target_hwnd << std::endl;
+		std::cout << "Enabling glass mode\n";
 		// Set the variables
 		glass_mode = true;
 		glass_dark_background = dark_background; //dark_background;
@@ -876,7 +877,7 @@ namespace renderer
 		if (!init_for_target_hwnd())
 		{
 			glass_mode = false;
-			std::cout << "Failed to enable glass mode for " << target_hwnd << std::endl;
+			std::cout << "Failed to enable glass mode\n";
 			return false;
 		}
 
@@ -941,28 +942,27 @@ namespace renderer
 	 */
 	bool process_window_placement(bool& placement_changed)
 	{
-		static clock_t was_maximized_timer = 0;
-
-
-		if (was_maximized_timer && clock() - was_maximized_timer >= 500)
+		if (was_maximized_timer && clock() - was_maximized_timer >= 250)
 		{
 			placement_changed = true;
-			window_hidden = false;
+
+			//stop_process_frame_thread();
+			capture_layer::dispose();
 
 
-			// std::cout << "Window maximized / restored / showed -> Reloading the layers" << std::endl; 
+			// Need to do it (ugly workaround) to avoid bug in WinRT capture API
+			display_layer::update_target_rect();
+			display_layer::target_rect.top -= 20;
+			display_layer::target_rect.left -= 20;
+			display_layer::move_layer_to_target();
+			
+			capture_layer::create_layer();
+			capture_layer::start_capture_session();
 
-
-			if (!process_frame_thread_exited)
-				un_init_for_target_hwnd();
-
-			if (!init_for_target_hwnd(true))
-				return false;
-
-
-			was_maximized = true;
 			was_maximized_timer = 0;
-			placement_changed = true;
+			x_size = y_size = 0;
+			start_process_frame_thread();
+			
 			return true;
 		}
 
@@ -984,7 +984,7 @@ namespace renderer
 			case SW_HIDE:
 			case SW_MINIMIZE:
 			case SW_SHOWMINIMIZED:
-				std::cout << "Window is not on screen so suspending capturing" << std::endl;
+				std::cout << "Window is not on screen so suspending capturing\n";
 				un_init_for_target_hwnd();
 				placement_changed = true;
 				window_hidden = true;
@@ -997,9 +997,16 @@ namespace renderer
 				if (old_show_cmd == SW_MINIMIZE || old_show_cmd == SW_SHOWMINIMIZED)
 					x_size = y_size = 0; // Prevent some bug when the window restored from minimized state
 
-				was_maximized_timer = clock();
-
-
+				if (!window_hidden)
+				{
+					was_maximized_timer = clock();
+				}
+				else
+				{
+					Sleep(250);
+					init_for_target_hwnd();
+					window_hidden = false;
+				}
 				return true;
 			}
 		}
@@ -1049,7 +1056,7 @@ namespace renderer
 
 				if (!capture_layer_bitblt::capture(target_rect.left, target_rect.top, x_size, y_size))
 				{
-					std::cout << "Failed to capture window using BitBlt API" << std::endl;
+					std::cout << "Failed to capture window using BitBlt API\n";
 					brightness_check_timer = clock();
 					return;
 				}
@@ -1096,12 +1103,6 @@ namespace renderer
 		auto placement_changed = false;
 		if (!process_window_placement(placement_changed))
 			return false;
-
-		if (placement_changed)
-			return true;
-
-		if (!glass_mode && dark_mode)
-			process_dark_mode_brightness_check();
 
 		return true;
 	}
