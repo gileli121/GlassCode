@@ -705,10 +705,9 @@ namespace renderer
 
 		while (run_process_frame_thread && continue_run)
 		{
-
 			if (was_maximized_timer)
 				break;
-			
+
 			if (is_target_window_in_use)
 				Sleep(1);
 			else
@@ -717,13 +716,13 @@ namespace renderer
 			capture_layer::TextureData captured_frame = {nullptr};
 			if (!capture_layer::get_new_frame(&captured_frame))
 				continue;
-			
+
 			auto update_size = false;
 
 			if (x_size != captured_frame.x_size || y_size != captured_frame.y_size)
 			{
 				force_render_timer = clock();
-				
+
 
 				if (resize_timer == 0)
 				{
@@ -955,14 +954,14 @@ namespace renderer
 			display_layer::target_rect.top -= 20;
 			display_layer::target_rect.left -= 20;
 			display_layer::move_layer_to_target();
-			
+
 			capture_layer::create_layer();
 			capture_layer::start_capture_session();
 
 			was_maximized_timer = 0;
 			x_size = y_size = 0;
 			start_process_frame_thread();
-			
+
 			return true;
 		}
 

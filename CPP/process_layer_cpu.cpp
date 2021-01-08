@@ -766,19 +766,19 @@ namespace process_layer_cpu
 			}
 
 #if 0 // Debug - pring reduced map
-			for (int y_r = 0; y_r < y_size_reduced; y_r++)
-				for (int x_r = 0; x_r < x_size_reduced; x_r++)
+			for (auto y_r = 0; y_r < y_size_reduced; y_r++)
+				for (auto x_r = 0; x_r < x_size_reduced; x_r++)
 				{
-					int point_r = y_r * x_size_reduced + x_r;
-					int y = y_r * GLASS_MODE_WARP_SIZE_SQRT;
-					int x = x_r * GLASS_MODE_WARP_SIZE_SQRT;
-					int y_max = y + GLASS_MODE_WARP_SIZE_SQRT; if (y_max > y_end) y_max = y_end;
-					int x_max = x + GLASS_MODE_WARP_SIZE_SQRT; if (x_max > x_end) x_max = x_end;
+					auto point_r = y_r * x_size_reduced + x_r;
+					auto y = y_r * cube_size;
+					auto x = x_r * cube_size;
+					auto y_max = y + cube_size; if (y_max > y_end) y_max = y_end;
+					auto x_max = x + cube_size; if (x_max > x_end) x_max = x_end;
 
-					for (int y2 = y; y2 < y_max; y2++)
-						for (int x2 = x; x2 < x_max; x2++)
+					for (auto y2 = y; y2 < y_max; y2++)
+						for (auto x2 = x; x2 < x_max; x2++)
 						{
-							int point = y2 * x_end * 4 + x2 * 4;
+							auto point = y2 * x_end * 4 + x2 * 4;
 							pixels[point] = pixels[point + 1] = pixels[point + 2] = pixels_reduced[point_r];
 						}
 				}
@@ -802,6 +802,8 @@ namespace process_layer_cpu
 
 						auto avg_shapes_avg_color = 0;
 						auto avg_shapes_count = 0;
+						byte shape_max_brightness = 0;
+						byte shape_max_darkness = 255;
 
 						for (auto y2 = y; y2 < y_max; y2++)
 							for (auto x2 = x; x2 < x_max; x2++)
@@ -818,13 +820,27 @@ namespace process_layer_cpu
 								{
 									avg_shapes_count++;
 									avg_shapes_avg_color += avg_color;
+
+									if (avg_color > shape_max_brightness)
+										shape_max_brightness = avg_color;
+									else if (avg_color < shape_max_darkness)
+										shape_max_darkness = avg_color;
 								}
 							}
 
 						if (avg_shapes_count)
 							avg_shapes_avg_color /= avg_shapes_count;
 
-						byte shape_max_brightness = 0;
+
+						float scalar;
+						if (avg_shapes_avg_color >= reduced_color || shape_max_darkness == 255)
+							scalar = 255.0 / static_cast<float>(shape_max_brightness);
+						else
+							scalar = 255.0 / static_cast<float>(255 - shape_max_darkness);
+
+
+						const auto is_shapes_dark = avg_shapes_avg_color <= reduced_color;
+
 
 						for (auto y2 = y; y2 < y_max; y2++)
 							for (auto x2 = x; x2 < x_max; x2++)
@@ -833,28 +849,43 @@ namespace process_layer_cpu
 								if (map_images::image_area_data && map_images::image_area_data[xy_point]) continue;
 								const auto point = y2 * x_size * 4 + x2 * 4;
 
-								byte avg_color;
+								const auto is_shape_color = (pixels[point] + pixels[point + 1] + pixels[point + 2]) / 3
+									!= reduced_color;
 
-								auto is_shape_color = false;
-								if (avg_shapes_count)
-								{
-									avg_color = (pixels[point] + pixels[point + 1] + pixels[point + 2]) / 3;
-									is_shape_color = avg_color != reduced_color;
-								}
 
 								if (is_shape_color)
 								{
-									if (avg_shapes_avg_color < reduced_color)
+									if (is_shapes_dark)
 									{
-										pixels[point] = ~pixels[point];
-										pixels[point + 1] = ~pixels[point + 1];
-										pixels[point + 2] = ~pixels[point + 2];
-
-										avg_color = (pixels[point] + pixels[point + 1] + pixels[point + 2]) / 3;
+										pixels[point] = 255 - pixels[point];
+										pixels[point + 1] = 255 - pixels[point + 1];
+										pixels[point + 2] = 255 - pixels[point + 2];
 									}
 
-									if (avg_color > shape_max_brightness)
-										shape_max_brightness = avg_color;
+
+									int b = pixels[point];
+									int g = pixels[point + 1];
+									int r = pixels[point + 2];
+
+
+									b *= scalar;
+									g *= scalar;
+									r *= scalar;
+
+									auto max = r > g ? r : g;
+									if (b > max) max = b;
+
+									if (max > 255)
+									{
+										const auto reduce_scalar = 255 / static_cast<float>(max);
+										b *= reduce_scalar;
+										g *= reduce_scalar;
+										r *= reduce_scalar;
+									}
+
+									pixels[point] = b;
+									pixels[point + 1] = g;
+									pixels[point + 2] = r;
 								}
 								else
 								{
@@ -862,73 +893,27 @@ namespace process_layer_cpu
 									{
 										if (reduced_color > 128)
 										{
-											pixels[point] = ~pixels[point];
-											pixels[point + 1] = ~pixels[point + 1];
-											pixels[point + 2] = ~pixels[point + 2];
+											pixels[point] = 255 - pixels[point];
+											pixels[point + 1] = 255 - pixels[point + 1];
+											pixels[point + 2] = 255 - pixels[point + 2];
 										}
 									}
 
-
-									if (background_level != 0)
+									if (background_level != 1)
 									{
-										pixels[point] *= background_level;
-										pixels[point + 1] *= background_level;
-										pixels[point + 2] *= background_level;
-										pixels[point + 3] = 255 * background_level;
-									}
-									else
-									{
-										memset(&pixels[point], 0, sizeof(unsigned char) * 4);
+										if (background_level != 0)
+										{
+											pixels[point] *= background_level;
+											pixels[point + 1] *= background_level;
+											pixels[point + 2] *= background_level;
+											pixels[point + 3] *= background_level;
+										}
+										else
+										{
+											memset(&pixels[point], 0, sizeof(unsigned char) * 4);
+										}
 									}
 								}
-							}
-
-
-						if (avg_shapes_count == 0)
-							continue;
-
-						auto scalar = 255 / static_cast<float>(shape_max_brightness);
-
-						for (auto y2 = y; y2 < y_max; y2++)
-							for (auto x2 = x; x2 < x_max; x2++)
-							{
-								const auto xy_point = y2 * x_size + x2;
-								if (map_images::image_area_data && map_images::image_area_data[xy_point]) continue;
-								const auto point = y2 * x_size * 4 + x2 * 4;
-
-								const byte avg_color = (pixels[point] + pixels[point + 1] + pixels[point + 2]) / 3;
-								if (avg_color == reduced_color)
-									continue;
-
-								int b = pixels[point];
-								int g = pixels[point + 1];
-								int r = pixels[point + 2];
-
-
-								if (shapes_level < 1.0)
-								{
-#if 0
-									b *= texts_level;
-									g *= texts_level;
-									r *= texts_level;
-
-#else
-									scalar *= shapes_level;
-#endif
-								}
-
-								b *= scalar;
-								g *= scalar;
-								r *= scalar;
-
-								if (b > 255) b = 255;
-								if (g > 255) g = 255;
-								if (r > 255) r = 255;
-
-
-								pixels[point] = b;
-								pixels[point + 1] = g;
-								pixels[point + 2] = r;
 							}
 					}
 			}
