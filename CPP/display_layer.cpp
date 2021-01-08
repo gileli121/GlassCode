@@ -102,6 +102,7 @@ namespace display_layer
 
 	BlurType blur_type = BlurType::NONE;
 	int transparent_level = 0;
+	bool is_target_window_transparent = false;
 
 	winrt::Windows::UI::Composition::Compositor display_compositor{nullptr};
 	winrt::Windows::UI::Composition::ContainerVisual container_root{nullptr};
@@ -164,9 +165,14 @@ namespace display_layer
 
 	void hide_target_hwnd()
 	{
+		if (!is_target_window_transparent)
+		{
+			DWORD flags = LWA_ALPHA;
+			GetLayeredWindowAttributes(target_hwnd, nullptr, &target_orig_alpha, &flags);
+		}
+		
 		SetWindowLong(target_hwnd, GWL_EXSTYLE, GetWindowLong(target_hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-		DWORD flags = LWA_ALPHA;
-		GetLayeredWindowAttributes(target_hwnd, nullptr, &target_orig_alpha, &flags);
+
 		SetLayeredWindowAttributes(target_hwnd, NULL, 1, LWA_ALPHA);
 
 		ShowWindow(display_hwnd, SW_HIDE);
@@ -176,7 +182,7 @@ namespace display_layer
 
 	void show_target_hwnd()
 	{
-		if (target_orig_alpha > 0)
+		if (target_orig_alpha > 0 && !is_target_window_transparent)
 			SetLayeredWindowAttributes(target_hwnd, NULL, target_orig_alpha, LWA_ALPHA);
 
 		ShowWindow(display_hwnd, SW_SHOWNA);
@@ -386,15 +392,21 @@ namespace display_layer
 
 	bool set_target_window_transparent()
 	{
+		if (!is_target_window_transparent)
+		{
+			DWORD flags = LWA_ALPHA;
+			GetLayeredWindowAttributes(target_hwnd, nullptr, &target_orig_alpha, &flags);
+		}
 		SetWindowLong(target_hwnd, GWL_EXSTYLE, GetWindowLong(target_hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-		DWORD flags = LWA_ALPHA;
-		GetLayeredWindowAttributes(target_hwnd, nullptr, &target_orig_alpha, &flags);
+
+		is_target_window_transparent = true;
 		return SetLayeredWindowAttributes(target_hwnd, NULL, 1, LWA_ALPHA) != 0;
 	}
 
 	void un_set_target_window_transparent()
 	{
-		SetLayeredWindowAttributes(target_hwnd, NULL, target_orig_alpha, LWA_ALPHA) != 0;
+		SetLayeredWindowAttributes(target_hwnd, NULL, target_orig_alpha, LWA_ALPHA);
+		is_target_window_transparent = false;
 	}
 
 	void set_blur_type(const BlurType blur_type)
