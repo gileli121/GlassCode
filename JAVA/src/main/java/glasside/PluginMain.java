@@ -3,6 +3,7 @@ package glasside;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import glasside.helpers.WindowsHelpers;
+import glasside.ui.toolwindow.GlassIdeToolWindow;
 
 import java.util.concurrent.ScheduledFuture;
 
@@ -12,6 +13,7 @@ public class PluginMain {
 
 
     private final Project project;
+    private GlassIdeToolWindow glassIdeToolWindow = null;
     private String initErrorMsg = null;
     private Renderer renderer = null;
     private static final int RENDERER_SCHEDULER_RUN_EVERY_SECONDS = 5;
@@ -31,7 +33,6 @@ public class PluginMain {
 
     // region init methods
     public void init() {
-
         this.opacityLevel = storage.opacityLevel;
         this.brightnessLevel = storage.brightnessLevel;
         this.blurType = storage.blurType;
@@ -39,6 +40,10 @@ public class PluginMain {
         if (storage.isEnabled)
             enableGlassMode(opacityLevel, brightnessLevel, blurType);
 
+    }
+
+    public void loadGlassIdeToolWindow(GlassIdeToolWindow glassIdeToolWindow) {
+        this.glassIdeToolWindow = glassIdeToolWindow;
     }
 
     public void dispose() {
@@ -122,6 +127,10 @@ public class PluginMain {
     // endregion
 
     // region getters & setters
+    
+    public GlassIdeToolWindow getGlassIdeToolWindow() {
+        return glassIdeToolWindow;
+    }
 
     public int getBlurType() {
         return blurType;

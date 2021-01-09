@@ -1,6 +1,7 @@
 package glasside;
 
 import glasside.helpers.PluginUiHelpers;
+import glasside.ui.toolwindow.GlassIdeToolWindow;
 
 public class RendererMaintainer implements Runnable {
     private final Renderer renderer;
@@ -19,7 +20,7 @@ public class RendererMaintainer implements Runnable {
         if (!pluginMain.isGlassEffectEnabled())
             // Should never happen because when the effect is disabled this task will not run
             // Did it only to be more safe
-            // TODO: ???? <---- Disable this task (have now idea how to do it from here
+            // TODO: ???? <---- Disable this task (have no idea how to do it from here
             return;
 
         if (renderer.isGlassEffectRunning())
@@ -32,6 +33,12 @@ public class RendererMaintainer implements Runnable {
         if (attempts > MAX_CRASH_COUNT) {
             // In this case we need to stop this scheduled task and abort the effect
             pluginMain.disableGlassMode();
+
+            // Update the UI if available
+            GlassIdeToolWindow glassIdeToolWindow = pluginMain.getGlassIdeToolWindow();
+            if (glassIdeToolWindow != null)
+                glassIdeToolWindow.updateUi();
+
             return;
         }
 
@@ -48,7 +55,7 @@ public class RendererMaintainer implements Runnable {
             attempts = 0;
         } catch (Exception e) {
             PluginUiHelpers.showErrorNotification("Failed to re-enable the effect " +
-                    "(attempt "+ attempts +")");
+                    "(attempt "+ attempts +"), Exception: " + e.getMessage());
         }
 
     }

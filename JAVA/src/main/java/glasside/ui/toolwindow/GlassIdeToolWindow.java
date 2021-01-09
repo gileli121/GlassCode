@@ -23,12 +23,13 @@ public class GlassIdeToolWindow {
     private JLabel blurTypeLabel;
 
     private boolean isUiUpdating = false;
-    private PluginMain context = null;
+    private final PluginMain pluginMain;
 
     public GlassIdeToolWindow(Project project) {
 
         // Get the context
-        context = ServiceManager.getService(project, PluginMain.class);
+        pluginMain = ServiceManager.getService(project, PluginMain.class);
+        pluginMain.loadGlassIdeToolWindow(this);
 
         updateUi();
 
@@ -57,7 +58,7 @@ public class GlassIdeToolWindow {
     private void onOpacitySliderChange(int level) {
 
         try {
-            context.setOpacityLevel(level);
+            pluginMain.setOpacityLevel(level);
         } catch (RuntimeException e) {
             PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
         }
@@ -68,7 +69,7 @@ public class GlassIdeToolWindow {
     private void onBrightnessSliderChange(int level) {
 
         try {
-            context.setBrightnessLevel(level);
+            pluginMain.setBrightnessLevel(level);
         } catch (RuntimeException e) {
             PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
         }
@@ -79,7 +80,7 @@ public class GlassIdeToolWindow {
     private void onBlurTypeSliderChange(int level) {
 
         try {
-            context.setBlurType(level);
+            pluginMain.setBlurType(level);
         } catch (RuntimeException e) {
             PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
         }
@@ -90,10 +91,10 @@ public class GlassIdeToolWindow {
     private void onEnableCheckBoxChange(boolean enabled) {
         try {
             if (enabled)
-                context.enableGlassMode(opacitySlider.getValue(), brightnessSlider.getValue(),
+                pluginMain.enableGlassMode(opacitySlider.getValue(), brightnessSlider.getValue(),
                         blurTypeSlider.getValue());
             else
-                context.disableGlassMode();
+                pluginMain.disableGlassMode();
 
         } catch (RuntimeException e) {
             enableCheckBox.setEnabled(false);
@@ -122,15 +123,15 @@ public class GlassIdeToolWindow {
     public void updateUi() {
 
         isUiUpdating = true;
-        opacitySlider.setValue(context.getOpacityLevel());
-        brightnessSlider.setValue(context.getBrightnessLevel());
-        blurTypeSlider.setValue(context.getBlurType());
-        enableCheckBox.setSelected(context.isGlassEffectEnabled());
+        opacitySlider.setValue(pluginMain.getOpacityLevel());
+        brightnessSlider.setValue(pluginMain.getBrightnessLevel());
+        blurTypeSlider.setValue(pluginMain.getBlurType());
+        enableCheckBox.setSelected(pluginMain.isGlassEffectEnabled());
         isUiUpdating = false;
 
-        setOpacityLabelText(context.getOpacityLevel());
-        setBrightnessLabelText(context.getBrightnessLevel());
-        setBlurTypeLabelText(context.getBlurType());
+        setOpacityLabelText(pluginMain.getOpacityLevel());
+        setBrightnessLabelText(pluginMain.getBrightnessLevel());
+        setBlurTypeLabelText(pluginMain.getBlurType());
     }
 
 
