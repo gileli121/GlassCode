@@ -33,12 +33,12 @@ LRESULT CALLBACK window_proc(
 #ifndef _DEBUG
 HWND target_hwnd = nullptr;
 #else
-HWND target_hwnd = reinterpret_cast<HWND>(0x00000000002B0748);
+HWND target_hwnd = reinterpret_cast<HWND>(0x0000000000CA0688);
 #endif
 
 bool is_cuda_enabled = false;
 int opacity_level = 0;
-int brightness_level = 40;
+int brightness_level = 50;
 int blur_type = 0;
 
 bool should_exit = false;
@@ -48,10 +48,7 @@ int main(const int argc, char* argv[])
 {
 	plog::init(plog::debug, new plog::ConsoleAppender<plog::FuncMessageFormatter>);
 
-	// bool wait = true;
-	// while (wait);
-
-	#ifndef _DEBUG
+// #ifndef _DEBUG
 	if (argc - 1 < ARGS_COUNT)
 	{
 		std::cout << "There are missing arguments. Need at least " << ARGS_COUNT << std::endl;
@@ -65,7 +62,7 @@ int main(const int argc, char* argv[])
 	opacity_level = atoi(argv[ARGS_OPACITY_LEVEL_IDX]);
 	brightness_level = atoi(argv[ARGS_BRIGHTNESS_LEVEL_IDX]);
 	blur_type = atoi(argv[ARGS_BLUR_TYPE_IDX]);
-	#endif
+// #endif
 
 
 	std::cout << "Checking arguments\n";
@@ -189,16 +186,17 @@ LRESULT CALLBACK window_proc(
 {
 	if (msg == WM_COPYDATA)
 	{
-		const auto copy_data_struct = reinterpret_cast<COPYDATASTRUCT*>(l_param);
+		auto* const copy_data_struct = reinterpret_cast<COPYDATASTRUCT*>(l_param);
 
-		const auto request = static_cast<s_request_command*>(copy_data_struct->lpData);
+		auto* const request = static_cast<s_request_command*>(copy_data_struct->lpData);
 
 		switch (request->command_id)
 		{
 		case COMMAND_SET_OPACITY:
+			renderer::glass_set_background_level(request->value1 / 100.0);
 			break;
 		case COMMAND_SET_BRIGHTNESS:
-
+			renderer::glass_set_brightness_level(request->value1 / 100.0);
 			break;
 		case COMMAND_SET_BLUR_TYPE:
 			renderer::set_glass_blur_level(static_cast<renderer::GlassBlurType>(request->value1));

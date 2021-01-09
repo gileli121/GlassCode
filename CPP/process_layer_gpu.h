@@ -22,6 +22,9 @@ namespace process_layer_gpu
 		            double glass_shapes);
 		void disable();
 		bool map_shapes();
+		void set_background_level(const double glass_background);
+		void set_shapes_level(const double glass_shapes);
+		void set_dark_background(const bool enable);
 	}
 
 	bool begin_process(ID3D11Texture2D* processed_texture, int capture_x_size, int capture_y_size);

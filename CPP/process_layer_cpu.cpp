@@ -635,10 +635,25 @@ namespace process_layer_cpu
 		            const double glass_images, const double glass_shapes)
 		{
 			is_enabled = true;
-			background_level = glass_background;
-			images_level = glass_images;
-			shapes_level = glass_shapes;
-			dark_background_mode = glass_dark_background;
+			glass_effect::background_level = glass_background;
+			glass_effect::images_level = glass_images;
+			glass_effect::shapes_level = glass_shapes;
+			glass_effect::dark_background_mode = glass_dark_background;
+		}
+
+		void set_background_level(const double glass_background)
+		{
+			glass_effect::background_level = glass_background;
+		}
+
+		void set_shapes_level(const double glass_shapes)
+		{
+			glass_effect::shapes_level = glass_shapes;
+		}
+
+		void set_dark_background_mode(const bool enable)
+		{
+			glass_effect::dark_background_mode = enable;
 		}
 
 		void disable()

@@ -17,32 +17,28 @@ import org.jetbrains.annotations.Nullable;
         storages = {@com.intellij.openapi.components.Storage("GradleIdeSettings.xml")}
 )
 public class Storage implements PersistentStateComponent<Storage> {
-//
-//  public String userId = "John Q. Public";
-//  public boolean ideaStatus = false;
 
-  public int opacityLevel = 30;
-  public int brightnessLevel = 30;
-  public int blurType = 0;
-  public boolean isEnabled = false;
-  public boolean isCudaEnabled;
+    public int opacityLevel = 65;
+    public int brightnessLevel = 100;
+    public int blurType = 1;
+    public boolean isEnabled = false;
+    public boolean isCudaEnabled = true;
 
 
-  public static Storage getInstance() {
-    return ServiceManager.getService(Storage.class);
-  }
+    public static Storage getInstance() {
+        return ServiceManager.getService(Storage.class);
+    }
 
-  @Nullable
-  @Override
-  public Storage getState() {
-    return this;
-  }
+    @Nullable
+    @Override
+    public Storage getState() {
+        return this;
+    }
 
-  @Override
-  public void loadState(@NotNull Storage state) {
-    XmlSerializerUtil.copyBean(state, this);
-  }
-
+    @Override
+    public void loadState(@NotNull Storage state) {
+        XmlSerializerUtil.copyBean(state, this);
+    }
 
 
 }

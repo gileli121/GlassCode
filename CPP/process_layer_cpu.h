@@ -17,6 +17,10 @@ namespace process_layer_cpu
 		            const double glass_images, const double glass_shapes);
 		void disable();
 		void map_shapes(double background);
+		void set_background_level(const double glass_background);
+		void set_shapes_level(const double glass_shapes);
+		void set_dark_background_mode(const bool enable);
+		
 	}
 
 	void enable_cache_buffer(bool enable);

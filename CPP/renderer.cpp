@@ -262,6 +262,35 @@ namespace renderer
 		}
 	}
 
+	void glass_set_background_level(const double glass_background)
+	{
+		if (graphic_device::is_cuda_adapter)
+			process_layer_gpu::glass_effect::set_background_level(glass_background);
+		else
+			process_layer_cpu::glass_effect::set_background_level(glass_background);
+	}
+	
+	void glass_set_shapes_level(const double glass_shapes)
+	{
+		if (graphic_device::is_cuda_adapter)
+			process_layer_gpu::glass_effect::set_shapes_level(glass_shapes);
+		else
+			process_layer_cpu::glass_effect::set_shapes_level(glass_shapes);
+	}
+	
+	void glass_set_dark_background_mode(const bool enable)
+	{
+		if (graphic_device::is_cuda_adapter)
+			process_layer_gpu::glass_effect::set_dark_background(enable);
+		else
+			process_layer_cpu::glass_effect::set_background_level(enable);
+	}
+
+	void glass_set_brightness_level(const double level)
+	{
+		display_layer::set_brightness_level(level * 255);
+	}
+
 	/**
 	 * \brief Set the target window for re rendering
 	 * \param target_hwnd - The handle of the window to set as target for re rendering
@@ -311,7 +340,10 @@ namespace renderer
 				display_layer::dispose();
 				return false;
 			}
+			
 			set_glass_blur_level(glass_blur_type);
+			if (glass_brightness_level < 1.0)
+				display_layer::set_brightness_level(glass_brightness_level * 255);
 		}
 
 

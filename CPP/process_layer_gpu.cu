@@ -82,6 +82,21 @@ namespace process_layer_gpu
 			is_enabled = true;
 		}
 
+		void set_background_level(const double glass_background)
+		{
+			glass_effect::background_level = glass_background;
+		}
+		
+		void set_shapes_level(const double glass_shapes)
+		{
+			glass_effect::shapes_level = glass_shapes;
+		}
+		
+		void set_dark_background(const bool enable)
+		{
+			glass_effect::dark_background = enable;
+		}
+
 		void disable()
 		{
 			is_enabled = false;
