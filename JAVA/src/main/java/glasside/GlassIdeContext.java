@@ -35,8 +35,8 @@ public class GlassIdeContext {
     }
 
     public void dispose() {
-        if (renderer != null)
-            renderer.dispose();
+        if (isEffectEnabled())
+            renderer.disable();
     }
 
     private WindowRenderer getRenderer() {
