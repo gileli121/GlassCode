@@ -13,6 +13,7 @@ repositories {
 
 intellij {
     version = '2020.3'
+    buildSearchableOptions.enabled = false
 }
 
 dependencies {
