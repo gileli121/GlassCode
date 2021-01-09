@@ -2,6 +2,7 @@ package glasside.helpers;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD;
@@ -16,19 +17,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class WindowRenderer {
 
     private static Path rendererPath = null;
     private final long windowId;
+    private WinDef.HWND windowHwnd;
     private Process rendererProcess = null;
-    private long rendererMsgWindow = 0;
     private WinDef.HWND rendererMsgHwnd = null;
-    private boolean isRendererRunning = false;
-    private boolean isCudaEnabled = false;
 
     public WindowRenderer(long windowId) {
         this.windowId = windowId;
+        this.windowHwnd = new WinDef.HWND(Pointer.createConstant(windowId));
     }
 
     public static class CommandId {
@@ -36,11 +39,6 @@ public class WindowRenderer {
         public static int SET_OPACITY = 1;
         public static int SET_BRIGHTNESS = 2;
         public static int SET_BLUR_TYPE = 3;
-    }
-
-    // region initialize / un-initialize methods
-    public void dispose() {
-        disable();
     }
 
 
@@ -52,76 +50,98 @@ public class WindowRenderer {
         if (isEnabled())
             return;
 
-        rendererMsgWindow = 0;
-        rendererMsgHwnd = null;
-
-        Path rendererPath = getRendererPath();
-
-        // Start the renderer process with the defined settings
-        {
-            try {
-                rendererProcess = new ProcessBuilder
-                        (
-                                rendererPath.toString(),
-                                isCudaEnabled ? "1" : "0",
-                                String.valueOf(windowId),
-                                String.valueOf(opacityLevel),
-                                String.valueOf(brightnessLevel),
-                                String.valueOf(blurType)
-                        ).start();
-            } catch (IOException e) {
-                String rendererLogs = getRendererLogs();
-                rendererProcess = null;
-                throw new RuntimeException("Failed to start Renderer.exe." +
-                        "Renderer Logs: " + rendererLogs +
-                        "Exception: " + e.getMessage());
-            }
-
-
-        }
-
-//         Get the hwnd communication window from the renderer process
-        {
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(rendererProcess.getInputStream()));
-            String line;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("MSG_WINDOW=")) {
-                        rendererMsgWindow = Long.parseLong(line.replace("MSG_WINDOW=", ""), 16);
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                if (rendererProcess.isAlive())
-                    rendererProcess.destroy();
-                throw new RuntimeException("Failed to communicate with the native renderer process. " +
-                        "Exception: " + e.getMessage());
-            }
-
-
-            if (rendererMsgWindow == 0) {
-                if (rendererProcess.isAlive())
-                    rendererProcess.destroy();
-
-                throw new RuntimeException("Failed to communicate with the native renderer process. " +
-                        "Could not get communication window handle." +
-                        "Renderer Logs: " + getRendererLogs());
-            } else {
-                rendererMsgHwnd = new WinDef.HWND(Pointer.createConstant(rendererMsgWindow));
-            }
-        }
-
-
-        // Need it to fix bug that sometimes the IDE process if frozen for some reason. This fix the issue
         try {
-            rendererProcess.getOutputStream().close();
-            rendererProcess.getInputStream().close();
-            rendererProcess.getErrorStream().close();
-        } catch (IOException e) {
-            rendererProcess.destroy();
-            throw new RuntimeException("Failed to detach from output stream of the Renderer process");
-            // TODO: Logic to restore the window opacity
+
+//        ScheduledFuture<?> scheduledFuture = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(new Runnable() {
+//            @Override
+//            public void run() {
+//                System.out.println("Some task");
+//            }
+//        }, 3, 3 , SECONDS);
+//
+//
+//        scheduledFuture.cancel(true); // Stop the scheduled task - This is working
+//        // ???? // // Start the scheduled task again <---- How to do it??
+
+
+            rendererMsgHwnd = null;
+
+            Path rendererPath = getRendererPath();
+
+            // Start the renderer process with the defined settings
+            {
+                try {
+                    rendererProcess = new ProcessBuilder
+                            (
+                                    rendererPath.toString(),
+                                    isCudaEnabled ? "1" : "0",
+                                    String.valueOf(windowId),
+                                    String.valueOf(opacityLevel),
+                                    String.valueOf(brightnessLevel),
+                                    String.valueOf(blurType)
+                            ).start();
+                } catch (IOException e) {
+                    String rendererLogs = getRendererLogs();
+                    rendererProcess = null;
+                    throw new RuntimeException("Failed to start Renderer.exe." +
+                            "Renderer Logs: " + rendererLogs +
+                            "Exception: " + e.getMessage());
+                }
+
+
+            }
+
+            long rendererMsgWindow = 0;
+//         Get the hwnd communication window from the renderer process
+            {
+                BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(rendererProcess.getInputStream()));
+                String line;
+                try {
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith("MSG_WINDOW=")) {
+                            rendererMsgWindow = Long.parseLong(line.replace("MSG_WINDOW=", ""), 16);
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    if (rendererProcess.isAlive())
+                        rendererProcess.destroy();
+                    throw new RuntimeException("Failed to communicate with the native renderer process. " +
+                            "Exception: " + e.getMessage());
+                }
+
+
+                if (rendererMsgWindow == 0) {
+                    if (rendererProcess.isAlive())
+                        rendererProcess.destroy();
+
+                    throw new RuntimeException("Failed to communicate with the native renderer process. " +
+                            "Could not get communication window handle." +
+                            "Renderer Logs: " + getRendererLogs());
+                } else {
+                    rendererMsgHwnd = new WinDef.HWND(Pointer.createConstant(rendererMsgWindow));
+                }
+            }
+
+
+            // Need it to fix bug that sometimes the IDE process if frozen for some reason. This fix the issue
+            try {
+                rendererProcess.getOutputStream().close();
+                rendererProcess.getInputStream().close();
+                rendererProcess.getErrorStream().close();
+            } catch (IOException e) {
+                rendererProcess.destroy();
+                throw new RuntimeException("Failed to detach from output stream of the Renderer process");
+            }
+
+        } catch (Exception e) {
+            if (isEnabled()) {
+                try {
+                    disable();
+                } catch (Exception ignored) {}
+            }
+            throw e;
         }
 
 
@@ -129,8 +149,31 @@ public class WindowRenderer {
 
 
     public void disable() {
-        if (!isEnabled()) return;
-        sendMessage(CommandId.EXIT, 0);
+
+        if (isEnabled()) {
+            sendMessage(CommandId.EXIT, 0);
+
+            if (rendererMsgHwnd != null) {
+                sendMessage(CommandId.EXIT, 0);
+                long timer = System.currentTimeMillis();
+                while (rendererProcess.isAlive()) {
+                    if (System.currentTimeMillis() - timer > 5000) {
+                        rendererProcess.destroy();
+                        break;
+                    }
+                }
+            } else {
+                rendererProcess.destroy();
+            }
+        }
+
+        // Get the current transparency of the window. if it is not 100%, recover it now using JNA
+        int transparency = WindowsHelpers.getWindowTransparency(windowHwnd);
+        if (transparency < 255)
+            WindowsHelpers.setWindowTransparency(windowHwnd, 255);
+
+        rendererProcess = null;
+        rendererMsgHwnd = null;
     }
 
     public boolean isEnabled() {
