@@ -20,7 +20,6 @@ public class PluginMain {
     private ScheduledFuture<?> rendererMaintainerSF = null;
     private final GlassIdeStorage glassIdeStorage;
 
-    private boolean isCudaEnabled = false;
     private boolean isGlassEnabled = false;
     private int opacityLevel = 30;
     private int brightnessLevel = 30;
@@ -34,7 +33,6 @@ public class PluginMain {
 
     // region init methods
     public void init() {
-        this.isCudaEnabled = glassIdeStorage.isCudaEnabled();
         this.opacityLevel = glassIdeStorage.getOpacityLevel();
         this.brightnessLevel = glassIdeStorage.getBrightnessLevel();
         this.blurType = glassIdeStorage.getBlurType();
@@ -81,7 +79,7 @@ public class PluginMain {
             return;
 
         abortIfInitError();
-        getRenderer().enableGlassEffect(isCudaEnabled, opacityLevel, brightnessLevel, blurType);
+        getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel, blurType);
 
         rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
                 scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
@@ -149,10 +147,6 @@ public class PluginMain {
 
     public boolean isGlassEffectEnabled() {
         return isGlassEnabled;
-    }
-
-    public boolean isCudaEnabled() {
-        return isCudaEnabled;
     }
 
     // endregion

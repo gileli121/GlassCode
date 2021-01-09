@@ -44,9 +44,16 @@ public class RendererMaintainer implements Runnable {
 
         try {
 
+            boolean isCudaEnabled;
+            GlassIdeStorage glassIdeStorage = GlassIdeStorage.getInstance();
+            if (glassIdeStorage != null)
+                isCudaEnabled = glassIdeStorage.isCudaEnabled();
+            else
+                isCudaEnabled = GlassIdeStorage.DEFAULT_CUDA_ENABLED;
+
             // Start the effect again
             renderer.enableGlassEffect(
-                    pluginMain.isCudaEnabled(),
+                    isCudaEnabled,
                     pluginMain.getOpacityLevel(),
                     pluginMain.getBrightnessLevel(),
                     pluginMain.getBlurType());
@@ -55,7 +62,7 @@ public class RendererMaintainer implements Runnable {
             attempts = 0;
         } catch (Exception e) {
             PluginUiHelpers.showErrorNotification("Failed to re-enable the effect " +
-                    "(attempt "+ attempts +"), Exception: " + e.getMessage());
+                    "(attempt " + attempts + "), Exception: " + e.getMessage());
         }
 
     }
