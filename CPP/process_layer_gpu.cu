@@ -409,6 +409,7 @@ namespace process_layer_gpu
 				atomicMax(&shape_max_brightness, avg_color);
 			}
 
+
 			__syncthreads();
 
 			if (is_shape_color)
@@ -422,18 +423,6 @@ namespace process_layer_gpu
 				int g = pixels[thread_point + 1];
 				int r = pixels[thread_point + 2];
 
-
-				if (texts_level < 1.0)
-				{
-#if 0
-					b *= texts_level;
-					g *= texts_level;
-					r *= texts_level;
-
-#else
-					scalar *= texts_level;
-#endif
-				}
 
 				b *= scalar;
 				g *= scalar;
