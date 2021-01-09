@@ -3,21 +3,20 @@ package glasside;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Supports storing the application settings in a persistent way.
- * The {@link State} and {@link Storage} annotations define the name of the data and the file name where
+ * The {@link State} and {@link com.intellij.openapi.components.Storage} annotations define the name of the data and the file name where
  * these persistent application settings are stored.
  */
 @State(
         name = "glasside.AppSettingsState",
-        storages = {@Storage("GradleIdeSettings.xml")}
+        storages = {@com.intellij.openapi.components.Storage("GradleIdeSettings.xml")}
 )
-public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage> {
+public class Storage implements PersistentStateComponent<Storage> {
 //
 //  public String userId = "John Q. Public";
 //  public boolean ideaStatus = false;
@@ -29,18 +28,18 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
   public boolean isCudaEnabled;
 
 
-  public static GlassIdeStorage getInstance() {
-    return ServiceManager.getService(GlassIdeStorage.class);
+  public static Storage getInstance() {
+    return ServiceManager.getService(Storage.class);
   }
 
   @Nullable
   @Override
-  public GlassIdeStorage getState() {
+  public Storage getState() {
     return this;
   }
 
   @Override
-  public void loadState(@NotNull GlassIdeStorage state) {
+  public void loadState(@NotNull Storage state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

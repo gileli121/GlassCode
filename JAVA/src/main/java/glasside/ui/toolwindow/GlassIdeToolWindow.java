@@ -2,17 +2,13 @@
 
 package glasside.ui.toolwindow;
 
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
-import glasside.GlassIdeContext;
-import glasside.GlassIdeStorage;
+import glasside.PluginMain;
+import glasside.Storage;
 import glasside.helpers.PluginUiHelpers;
-import glasside.ui.settings.SettingsScreenManager;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import java.awt.event.ItemEvent;
 
 public class GlassIdeToolWindow {
@@ -27,12 +23,12 @@ public class GlassIdeToolWindow {
     private JLabel blurTypeLabel;
 
     private boolean isUiUpdating = false;
-    private GlassIdeContext context = null;
+    private PluginMain context = null;
 
     public GlassIdeToolWindow(Project project) {
 
         // Get the context
-        context = ServiceManager.getService(project, GlassIdeContext.class);
+        context = ServiceManager.getService(project, PluginMain.class);
 
         updateUi();
 
@@ -107,7 +103,7 @@ public class GlassIdeToolWindow {
 
 
     private void onSaveAsDefaultEvent() {
-        GlassIdeStorage storage = GlassIdeStorage.getInstance();
+        Storage storage = Storage.getInstance();
         storage.opacityLevel = opacitySlider.getValue();
         storage.brightnessLevel = brightnessSlider.getValue();
         storage.blurType = blurTypeSlider.getValue();
@@ -129,7 +125,7 @@ public class GlassIdeToolWindow {
         opacitySlider.setValue(context.getOpacityLevel());
         brightnessSlider.setValue(context.getBrightnessLevel());
         blurTypeSlider.setValue(context.getBlurType());
-        enableCheckBox.setSelected(context.isEffectEnabled());
+        enableCheckBox.setSelected(context.isGlassEffectEnabled());
         isUiUpdating = false;
 
         setOpacityLabelText(context.getOpacityLevel());

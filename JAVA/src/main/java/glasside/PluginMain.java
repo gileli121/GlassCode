@@ -1,25 +1,32 @@
 package glasside;
 
 import com.intellij.openapi.project.Project;
-import glasside.helpers.WindowRenderer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import glasside.helpers.WindowsHelpers;
 
-public class GlassIdeContext {
+import java.util.concurrent.ScheduledFuture;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+public class PluginMain {
 
 
     private final Project project;
     private String initErrorMsg = null;
-    private WindowRenderer renderer = null;
-    private GlassIdeStorage storage = null;
+    private Renderer renderer = null;
+    private static final int RENDERER_SCHEDULER_RUN_EVERY_SECONDS = 5;
+    private ScheduledFuture<?> rendererMaintainerSF = null;
+    private final Storage storage;
 
+    private boolean isGlassEnabled = false;
     private int opacityLevel = 30;
     private int brightnessLevel = 30;
     private int blurType = 0;
 
 
-    public GlassIdeContext(Project project) {
+    public PluginMain(Project project) {
         this.project = project;
-        this.storage = GlassIdeStorage.getInstance();
+        this.storage = Storage.getInstance();
     }
 
     // region init methods
@@ -30,16 +37,15 @@ public class GlassIdeContext {
         this.blurType = storage.blurType;
 
         if (storage.isEnabled)
-            enableGlassMode(opacityLevel,brightnessLevel,blurType);
+            enableGlassMode(opacityLevel, brightnessLevel, blurType);
 
     }
 
     public void dispose() {
-        if (isEffectEnabled())
-            renderer.disable();
+        disableGlassMode(); // This will disable the glass mode if needed
     }
 
-    private WindowRenderer getRenderer() {
+    private Renderer getRenderer() {
         if (renderer == null) {
             // Get the window handle for Windows
             long ideWindowId = WindowsHelpers.getIdeWindowOfProject(project);
@@ -47,7 +53,7 @@ public class GlassIdeContext {
                 initErrorMsg = "Failed to detect the IDE window handle";
                 throw new RuntimeException(initErrorMsg);
             }
-            renderer = new WindowRenderer(ideWindowId);
+            renderer = new Renderer(ideWindowId);
         }
 
         return renderer;
@@ -62,38 +68,54 @@ public class GlassIdeContext {
             throw new RuntimeException(initErrorMsg);
     }
 
-    public void enableGlassMode(int opacityLevel,int brightnessLevel, int blurType) {
+    public void enableGlassMode(int opacityLevel, int brightnessLevel, int blurType) {
+        if (isGlassEnabled)
+            return;
+
         abortIfInitError();
-        getRenderer().enableEffect(storage.isCudaEnabled,opacityLevel, brightnessLevel, blurType);
+        getRenderer().enableGlassEffect(storage.isCudaEnabled, opacityLevel, brightnessLevel, blurType);
+
+        rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
+                scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
+                        RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
+                        SECONDS);
+
         this.opacityLevel = opacityLevel;
         this.brightnessLevel = brightnessLevel;
         this.blurType = blurType;
+        this.isGlassEnabled = true;
     }
 
     public void disableGlassMode() {
-        if (isEffectEnabled()) {
-            getRenderer().disable();
+        if (renderer != null)
+            getRenderer().disableGlassEffect();
+
+        if (rendererMaintainerSF != null) {
+            rendererMaintainerSF.cancel(true);
+            rendererMaintainerSF = null;
         }
+
+        isGlassEnabled = false;
     }
 
     public void setBlurType(int blurType) {
         abortIfInitError();
         this.blurType = blurType;
-        if (isEffectEnabled())
+        if (isGlassEnabled)
             getRenderer().setBlurType(blurType);
     }
 
     public void setOpacityLevel(int opacityLevel) {
         abortIfInitError();
         this.opacityLevel = opacityLevel;
-        if (isEffectEnabled())
+        if (isGlassEnabled)
             getRenderer().setOpacityLevel(opacityLevel);
     }
 
     public void setBrightnessLevel(int brightnessLevel) {
         abortIfInitError();
         this.brightnessLevel = brightnessLevel;
-        if (isEffectEnabled())
+        if (isGlassEnabled)
             getRenderer().setBrightnessLevel(brightnessLevel);
     }
 
@@ -113,8 +135,8 @@ public class GlassIdeContext {
         return opacityLevel;
     }
 
-    public boolean isEffectEnabled() {
-        return renderer != null && renderer.isEnabled();
+    public boolean isGlassEffectEnabled() {
+        return isGlassEnabled;
     }
 
     // endregion

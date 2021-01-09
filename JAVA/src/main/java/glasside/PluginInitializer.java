@@ -7,7 +7,7 @@ import com.intellij.openapi.project.ProjectManagerListener;
 import org.jetbrains.annotations.NotNull;
 
 
-public class GlassIdeContextInitializer implements ProjectManagerListener {
+public class PluginInitializer implements ProjectManagerListener {
 
   /**
    * Invoked on project open.
@@ -21,8 +21,8 @@ public class GlassIdeContextInitializer implements ProjectManagerListener {
       return;
     }
 
-    GlassIdeContext glassIdeContext = ServiceManager.getService(project, GlassIdeContext.class);
-    glassIdeContext.init();
+    PluginMain pluginMain = ServiceManager.getService(project, PluginMain.class);
+    pluginMain.init();
 
 
   }
@@ -39,8 +39,8 @@ public class GlassIdeContextInitializer implements ProjectManagerListener {
       return;
     }
 
-    GlassIdeContext glassIdeContext = ServiceManager.getService(project, GlassIdeContext.class);
-    glassIdeContext.dispose();
+    PluginMain pluginMain = ServiceManager.getService(project, PluginMain.class);
+    pluginMain.dispose();
   }
 
 }

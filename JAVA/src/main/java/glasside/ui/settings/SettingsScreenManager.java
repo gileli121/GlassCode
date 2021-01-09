@@ -1,7 +1,6 @@
 package glasside.ui.settings;
 
 import com.intellij.openapi.options.Configurable;
-import glasside.GlassIdeStorage;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 

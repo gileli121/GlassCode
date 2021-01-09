@@ -1,14 +1,14 @@
-package glasside.helpers;
+package glasside;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.util.concurrency.AppExecutorUtil;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
+import glasside.helpers.WindowsHelpers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,19 +17,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ScheduledFuture;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
-public class WindowRenderer {
+public class Renderer {
 
     private static Path rendererPath = null;
     private final long windowId;
-    private WinDef.HWND windowHwnd;
+    private final WinDef.HWND windowHwnd;
     private Process rendererProcess = null;
     private WinDef.HWND rendererMsgHwnd = null;
 
-    public WindowRenderer(long windowId) {
+    public Renderer(long windowId) {
         this.windowId = windowId;
         this.windowHwnd = new WinDef.HWND(Pointer.createConstant(windowId));
     }
@@ -45,9 +42,9 @@ public class WindowRenderer {
     // endregion
 
     // region API/Public methods
-    public void enableEffect(boolean isCudaEnabled, int opacityLevel, int brightnessLevel, int blurType) {
+    public void enableGlassEffect(boolean isCudaEnabled, int opacityLevel, int brightnessLevel, int blurType) {
 
-        if (isEnabled())
+        if (isGlassEffectRunning())
             return;
 
         try {
@@ -136,9 +133,9 @@ public class WindowRenderer {
             }
 
         } catch (Exception e) {
-            if (isEnabled()) {
+            if (isGlassEffectRunning()) {
                 try {
-                    disable();
+                    disableGlassEffect();
                 } catch (Exception ignored) {}
             }
             throw e;
@@ -148,9 +145,9 @@ public class WindowRenderer {
     }
 
 
-    public void disable() {
+    public void disableGlassEffect() {
 
-        if (isEnabled()) {
+        if (isGlassEffectRunning()) {
             sendMessage(CommandId.EXIT, 0);
 
             if (rendererMsgHwnd != null) {
@@ -176,12 +173,12 @@ public class WindowRenderer {
         rendererMsgHwnd = null;
     }
 
-    public boolean isEnabled() {
+    public boolean isGlassEffectRunning() {
         return rendererProcess != null && rendererProcess.isAlive();
     }
 
     private void abortIfNotEnabled() {
-        if (!isEnabled())
+        if (!isGlassEffectRunning())
             throw new RuntimeException("Renderer process is not running. Can't processed");
     }
 

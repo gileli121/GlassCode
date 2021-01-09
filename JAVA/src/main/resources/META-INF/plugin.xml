@@ -46,9 +46,9 @@
                                  id="glasside.ui.settings.SettingsScreenManager"
                                  displayName="GlassIDE"/>
 
-        <applicationService serviceImplementation="glasside.GlassIdeStorage"/>
+        <applicationService serviceImplementation="glasside.Storage"/>
 
-        <projectService serviceImplementation="glasside.GlassIdeContext"/>
+        <projectService serviceImplementation="glasside.PluginMain"/>
 <!--        <postStartupActivity implementation="glasside.PostStartupActivity"/>-->
         
 
@@ -56,7 +56,7 @@
 
 
     <applicationListeners>
-        <listener class="glasside.GlassIdeContextInitializer"
+        <listener class="glasside.PluginInitializer"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 
