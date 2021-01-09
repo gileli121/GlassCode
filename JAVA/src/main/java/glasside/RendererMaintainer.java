@@ -46,7 +46,7 @@ public class RendererMaintainer implements Runnable {
 
             // Start the effect again
             renderer.enableGlassEffect(
-                    Storage.getInstance().isCudaEnabled,
+                    pluginMain.isCudaEnabled(),
                     pluginMain.getOpacityLevel(),
                     pluginMain.getBrightnessLevel(),
                     pluginMain.getBlurType());

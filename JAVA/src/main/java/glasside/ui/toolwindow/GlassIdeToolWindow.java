@@ -5,7 +5,6 @@ package glasside.ui.toolwindow;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import glasside.PluginMain;
-import glasside.Storage;
 import glasside.helpers.PluginUiHelpers;
 
 import javax.swing.*;
@@ -102,17 +101,6 @@ public class GlassIdeToolWindow {
         }
     }
 
-
-    private void onSaveAsDefaultEvent() {
-        Storage storage = Storage.getInstance();
-        storage.opacityLevel = opacitySlider.getValue();
-        storage.brightnessLevel = brightnessSlider.getValue();
-        storage.blurType = blurTypeSlider.getValue();
-        storage.isEnabled = enableCheckBox.isSelected();
-
-
-
-    }
 
 
     // endregion

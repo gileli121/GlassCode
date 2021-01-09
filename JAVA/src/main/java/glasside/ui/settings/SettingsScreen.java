@@ -1,13 +1,12 @@
 package glasside.ui.settings;
 
-import org.jetbrains.annotations.NotNull;
+import glasside.GlassIdeStorage;
 
 import javax.swing.*;
 
 public class SettingsScreen {
     private JPanel mainPanel;
     private JCheckBox enableGPUAccelerationCheckBox;
-
 
 
     public JPanel getPanel() {
@@ -18,21 +17,17 @@ public class SettingsScreen {
         return enableGPUAccelerationCheckBox;
     }
 
-//    @NotNull
-//    public String getUserNameText() {
-//        return "";
-//    }
-//
-//    public void setUserNameText(@NotNull String newText) {
-//    }
-//
-//    public boolean getIdeaUserStatus() {
-//        return true;
-//    }
-//
-//    public void setIdeaUserStatus(boolean newStatus) {
-//
-//    }
+    public boolean isCudaEnabled() {
+        return enableGPUAccelerationCheckBox.isSelected();
+    }
 
+    public void setCudaEnabled(boolean enabled) {
+        enableGPUAccelerationCheckBox.setSelected(enabled);
+    }
+
+    public void updateUi() {
+        GlassIdeStorage glassIdeStorage = GlassIdeStorage.getInstance();
+        setCudaEnabled(glassIdeStorage.isCudaEnabled());
+    }
 
 }

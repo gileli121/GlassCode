@@ -18,8 +18,9 @@ public class PluginMain {
     private Renderer renderer = null;
     private static final int RENDERER_SCHEDULER_RUN_EVERY_SECONDS = 5;
     private ScheduledFuture<?> rendererMaintainerSF = null;
-    private final Storage storage;
+    private final GlassIdeStorage glassIdeStorage;
 
+    private boolean isCudaEnabled = false;
     private boolean isGlassEnabled = false;
     private int opacityLevel = 30;
     private int brightnessLevel = 30;
@@ -28,16 +29,18 @@ public class PluginMain {
 
     public PluginMain(Project project) {
         this.project = project;
-        this.storage = Storage.getInstance();
+        this.glassIdeStorage = GlassIdeStorage.getInstance();
     }
 
     // region init methods
     public void init() {
-        this.opacityLevel = storage.opacityLevel;
-        this.brightnessLevel = storage.brightnessLevel;
-        this.blurType = storage.blurType;
+        this.isCudaEnabled = glassIdeStorage.isCudaEnabled();
+        this.opacityLevel = glassIdeStorage.getOpacityLevel();
+        this.brightnessLevel = glassIdeStorage.getBrightnessLevel();
+        this.blurType = glassIdeStorage.getBlurType();
+        this.isGlassEnabled = glassIdeStorage.isEnabled();
 
-        if (storage.isEnabled)
+        if (this.isGlassEnabled)
             enableGlassMode(opacityLevel, brightnessLevel, blurType);
 
     }
@@ -78,7 +81,7 @@ public class PluginMain {
             return;
 
         abortIfInitError();
-        getRenderer().enableGlassEffect(storage.isCudaEnabled, opacityLevel, brightnessLevel, blurType);
+        getRenderer().enableGlassEffect(isCudaEnabled, opacityLevel, brightnessLevel, blurType);
 
         rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
                 scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
@@ -146,6 +149,10 @@ public class PluginMain {
 
     public boolean isGlassEffectEnabled() {
         return isGlassEnabled;
+    }
+
+    public boolean isCudaEnabled() {
+        return isCudaEnabled;
     }
 
     // endregion

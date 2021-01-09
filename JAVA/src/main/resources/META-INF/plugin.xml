@@ -42,15 +42,14 @@
         <toolWindow id="GlassIDE" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="glasside.ui.toolwindow.MyToolWindowFactory"/>
 
-        <applicationConfigurable parentId="appearance" instance="glasside.ui.settings.SettingsScreenManager"
-                                 id="glasside.ui.settings.SettingsScreenManager"
+        <applicationConfigurable parentId="appearance" instance="glasside.ui.settings.SettingsManager"
+                                 id="glasside.ui.settings.SettingsManager"
                                  displayName="GlassIDE"/>
 
-        <applicationService serviceImplementation="glasside.Storage"/>
+        <applicationService serviceImplementation="glasside.GlassIdeStorage"/>
 
         <projectService serviceImplementation="glasside.PluginMain"/>
-<!--        <postStartupActivity implementation="glasside.PostStartupActivity"/>-->
-        
+
 
     </extensions>
 
