@@ -39,6 +39,7 @@ In this menu, the following options available:
 <br>
 When it set to `None`, there is no blur effect at all. For `Medium` and `High` it looks as following:
 <br>
+
 #### Medium blur:
 ![][file:glass-ide-blur-medium.png]
 #### High blur:
