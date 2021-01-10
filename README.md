@@ -2,8 +2,6 @@
 This plugin allows you to make your IDE to be fully transparent while keeping the code sharp
 and bright.
 
-<br>
-
 ## Introduction
 Adjust the opacity level while keeping the text sharp and bright
 ![][file:glass-ide-change-opacity.gif]
