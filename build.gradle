@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.6.5'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+def isDebugMode = false // If false it will use the debug version of the renderer
+
+repositories {
+    mavenCentral()
+}
+
+intellij {
+    version = '2020.3'
+    buildSearchableOptions.enabled = false
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+
+sourceSets {
+    test {
+        resources {
+            srcDir "main"
+        }
+    }
+}
+
+patchPluginXml {
+    version = project.version
+    sinceBuild = '202'
+    untilBuild = '203.*'
+}
+
+def cppOutputDir = isDebugMode ? "Debug" : "Release"
+
+
+task addBinariesToSandbox {
+    doLast {
+        println 'Adding binaries'
+        copy {
+            from file("$projectDir\\..\\GlassIDE-Renderer\\x64\\${cppOutputDir}")
+            into file("$buildDir\\idea-sandbox\\plugins\\$rootProject.name\\bin")
+            include "Renderer.exe"
+        }
+    }
+}
+
+prepareSandbox.finalizedBy(addBinariesToSandbox)
+
+
+task addBinariesToTestingSandbox {
+    doLast {
+        println 'Adding binaries'
+        copy {
+            from file("$projectDir\\..\\GlassIDE-Renderer\\x64\\${cppOutputDir}")
+            into file("$buildDir\\idea-sandbox\\plugins-test\\$rootProject.name\\bin")
+            include "Renderer.exe"
+        }
+    }
+}
+
+prepareTestingSandbox.finalizedBy(addBinariesToTestingSandbox)
+
