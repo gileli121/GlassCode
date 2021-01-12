@@ -6,7 +6,7 @@ import glasside.ui.toolwindow.GlassIdeToolWindow;
 public class RendererMaintainer implements Runnable {
     private final Renderer renderer;
     private final PluginMain pluginMain;
-    private static final int MAX_CRASH_COUNT = 10;
+    private static final int MAX_CRASH_COUNT = 5;
     private int attempts = 0;
 
     public RendererMaintainer(PluginMain pluginMain, Renderer renderer) {
@@ -58,8 +58,6 @@ public class RendererMaintainer implements Runnable {
                     pluginMain.getBrightnessLevel(),
                     pluginMain.getBlurType());
 
-            // Reset the attempts counter
-            attempts = 0;
         } catch (Exception e) {
             PluginUiHelpers.showErrorNotification("Failed to re-enable the effect " +
                     "(attempt " + attempts + "), Exception: " + e.getMessage());
