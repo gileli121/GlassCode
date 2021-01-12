@@ -3,9 +3,7 @@ package glasside.helpers;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.*;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 
@@ -52,5 +50,16 @@ public class WindowsHelpers {
                     " Kernel32 Error: " + Kernel32.INSTANCE.GetLastError());
         }
     }
+
+
+    public static int getWindowsBuildNumber() {
+        try {
+            return Integer.parseInt(Advapi32Util.registryGetStringValue(
+                    WinReg.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "CurrentBuild"));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
 }
 

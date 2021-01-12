@@ -79,17 +79,22 @@ public class PluginMain {
             return;
 
         abortIfInitError();
-        getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel, blurType);
 
-        rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
-                scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
-                        RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
-                        SECONDS);
+        try {
+            getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel, blurType);
 
-        this.opacityLevel = opacityLevel;
-        this.brightnessLevel = brightnessLevel;
-        this.blurType = blurType;
-        this.isGlassEnabled = true;
+            rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
+                    scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
+                            RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
+                            SECONDS);
+
+            this.opacityLevel = opacityLevel;
+            this.brightnessLevel = brightnessLevel;
+            this.blurType = blurType;
+            this.isGlassEnabled = true;
+        } catch (Exception e) {
+
+        }
     }
 
     public void disableGlassMode() {

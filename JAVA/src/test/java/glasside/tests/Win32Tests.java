@@ -19,4 +19,9 @@ public class Win32Tests extends BasePlatformTestCase {
         System.out.println(1);
     }
 
+    public void testGetOsBuildNumber() {
+        int buildNumber = WindowsHelpers.getWindowsBuildNumber();
+        System.out.println("build number: " + buildNumber);
+    }
+
 }

@@ -20,15 +20,19 @@ import java.util.List;
 
 public class Renderer {
 
+    private static final int MINIMUM_REQUIRED_OS_BUILD_NUMBER = 19041;
+
     private static Path rendererPath = null;
     private final long windowId;
     private final WinDef.HWND windowHwnd;
     private Process rendererProcess = null;
     private WinDef.HWND rendererMsgHwnd = null;
+    private int osBuildNumber = 0;
 
     public Renderer(long windowId) {
         this.windowId = windowId;
         this.windowHwnd = new WinDef.HWND(Pointer.createConstant(windowId));
+        this.osBuildNumber = WindowsHelpers.getWindowsBuildNumber();
     }
 
     public static class CommandId {
@@ -47,19 +51,13 @@ public class Renderer {
         if (isGlassEffectRunning())
             return;
 
+        if (osBuildNumber < MINIMUM_REQUIRED_OS_BUILD_NUMBER)
+            throw new RuntimeException("The build number (" + osBuildNumber + ") of Windows 10 is too old of this effect. " +
+                    "in order to enable it, you need to update Windows 10 to the latest update."
+                    + System.lineSeparator() + System.lineSeparator() +
+                    "Minimum required OS build number: " + MINIMUM_REQUIRED_OS_BUILD_NUMBER);
+
         try {
-
-//        ScheduledFuture<?> scheduledFuture = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("Some task");
-//            }
-//        }, 3, 3 , SECONDS);
-//
-//
-//        scheduledFuture.cancel(true); // Stop the scheduled task - This is working
-//        // ???? // // Start the scheduled task again <---- How to do it??
-
 
             rendererMsgHwnd = null;
 
@@ -136,7 +134,8 @@ public class Renderer {
             if (isGlassEffectRunning()) {
                 try {
                     disableGlassEffect();
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
             throw e;
         }
