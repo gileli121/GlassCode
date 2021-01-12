@@ -1044,10 +1044,11 @@ namespace renderer
 				if (old_show_cmd == SW_MINIMIZE || old_show_cmd == SW_SHOWMINIMIZED)
 					x_size = y_size = 0; // Prevent some bug when the window restored from minimized state
 
+				was_minimized_timer = 0;
+				
 				if (!window_hidden)
 				{
-					was_maximized_timer = clock();
-					was_minimized_timer = 0;
+					was_maximized_timer = clock();	
 				}
 				else
 				{
