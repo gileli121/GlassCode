@@ -266,6 +266,8 @@ namespace renderer
 			set_blur_type(display_layer::BlurType::NONE);
 			break;
 		}
+
+		glass_blur_type = blur_level;
 	}
 
 	void glass_set_background_level(const double glass_background)
