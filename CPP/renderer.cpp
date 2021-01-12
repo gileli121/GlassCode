@@ -159,6 +159,12 @@ namespace renderer
 	clock_t was_maximized_timer = 0;
 
 	/**
+	 * \brief While the window is minimized we use this timer to wait a little before stopping re-rendering
+	 * the window. this is to avoid bug with intellij that when minimizing the window become blank
+	 */
+	clock_t was_minimized_timer = 0;
+
+	/**
 	 * \brief Indicates if functions process_frame_in_gpu or process_frame_in_cpu should
 	 * apply filter image algorithms that implemented in process_layer_cpu or process_layer_gpu
 	 */
@@ -269,7 +275,7 @@ namespace renderer
 		else
 			process_layer_cpu::glass_effect::set_background_level(glass_background);
 	}
-	
+
 	void glass_set_shapes_level(const double glass_shapes)
 	{
 		if (graphic_device::is_cuda_adapter)
@@ -277,7 +283,7 @@ namespace renderer
 		else
 			process_layer_cpu::glass_effect::set_shapes_level(glass_shapes);
 	}
-	
+
 	void glass_set_dark_background_mode(const bool enable)
 	{
 		if (graphic_device::is_cuda_adapter)
@@ -340,7 +346,7 @@ namespace renderer
 				display_layer::dispose();
 				return false;
 			}
-			
+
 			set_glass_blur_level(glass_blur_type);
 			if (glass_brightness_level < 1.0)
 				display_layer::set_brightness_level(glass_brightness_level * 255);
@@ -737,7 +743,7 @@ namespace renderer
 
 		while (run_process_frame_thread && continue_run)
 		{
-			if (was_maximized_timer)
+			if (was_maximized_timer || was_minimized_timer)
 				break;
 
 			if (is_target_window_in_use)
@@ -818,6 +824,8 @@ namespace renderer
 					force_render_timer = 0;
 			}
 
+
+			// display_layer::draw_texture(captured_frame.textrue);
 
 			auto new_frame = false;
 			bool success;
@@ -977,7 +985,7 @@ namespace renderer
 		{
 			placement_changed = true;
 
-			//stop_process_frame_thread();
+			stop_process_frame_thread();
 			capture_layer::dispose();
 
 
@@ -997,6 +1005,13 @@ namespace renderer
 			return true;
 		}
 
+		if (was_minimized_timer && clock() - was_minimized_timer >= 500)
+		{
+			un_init_for_target_hwnd();
+			placement_changed = true;
+			window_hidden = true;
+			was_minimized_timer = 0;
+		}
 
 		WINDOWPLACEMENT placement_new = {0};
 		if (!GetWindowPlacement(target_hwnd, &placement_new))
@@ -1016,9 +1031,7 @@ namespace renderer
 			case SW_MINIMIZE:
 			case SW_SHOWMINIMIZED:
 				std::cout << "Window is not on screen so suspending capturing\n";
-				un_init_for_target_hwnd();
-				placement_changed = true;
-				window_hidden = true;
+				was_minimized_timer = clock();
 				return true;
 
 			case SW_SHOWNORMAL:
