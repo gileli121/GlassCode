@@ -3,8 +3,8 @@ plugins {
     id 'org.jetbrains.intellij' version '0.6.5'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'com.glasside'
+version '1.0.1-SNAPSHOT'
 def isDebugMode = false // If false it will use the debug version of the renderer
 
 repositories {
