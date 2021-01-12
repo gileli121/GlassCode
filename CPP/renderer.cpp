@@ -1034,6 +1034,7 @@ namespace renderer
 			case SW_SHOWMINIMIZED:
 				std::cout << "Window is not on screen so suspending capturing\n";
 				was_minimized_timer = clock();
+				was_maximized_timer = 0;
 				return true;
 
 			case SW_SHOWNORMAL:
@@ -1046,6 +1047,7 @@ namespace renderer
 				if (!window_hidden)
 				{
 					was_maximized_timer = clock();
+					was_minimized_timer = 0;
 				}
 				else
 				{
