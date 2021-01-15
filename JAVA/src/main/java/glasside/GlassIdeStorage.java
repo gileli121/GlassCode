@@ -8,8 +8,6 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-
 
 @State(
         name = "glasside.GlassIdeStorage",
@@ -17,18 +15,19 @@ import java.util.LinkedHashMap;
 )
 public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage> {
 
-    public static final int DEFAULT_OPACITY = 65;
-    public static final int DEFAULT_BRIGHTNESS = 100;
-    public static final int DEFAULT_BLUR_TYPE = 1;
-    public static final boolean DEFAULT_CUDA_ENABLED = true;
-    public static final boolean DEFAULT_IS_GLASS_ENABLED = false;
-
+    private static final int DEFAULT_OPACITY = 70;
+    private static final int DEFAULT_BRIGHTNESS = 70;
+    private static final int DEFAULT_BLUR_TYPE = 0;
+    private static final boolean DEFAULT_CUDA_ENABLED = true;
+    private static final boolean DEFAULT_IS_GLASS_ENABLED = false;
+    private static final boolean DEFAULT_USE_CONTRAST_THEME = true;
 
     private int opacityLevel = DEFAULT_OPACITY;
     private int brightnessLevel = DEFAULT_BRIGHTNESS;
     private int blurType = DEFAULT_BLUR_TYPE;
     private boolean isEnabled = DEFAULT_IS_GLASS_ENABLED;
     private boolean isCudaEnabled = DEFAULT_CUDA_ENABLED;
+    private boolean useHighContrastTheme = DEFAULT_USE_CONTRAST_THEME;
 
     public static GlassIdeStorage getInstance() {
         return ServiceManager.getService(GlassIdeStorage.class);
@@ -61,6 +60,7 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
         blurType = DEFAULT_BLUR_TYPE;
         isEnabled = DEFAULT_IS_GLASS_ENABLED;
         isCudaEnabled = DEFAULT_CUDA_ENABLED;
+        useHighContrastTheme = DEFAULT_USE_CONTRAST_THEME;
     }
 
 
@@ -88,6 +88,10 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
         isCudaEnabled = cudaEnabled;
     }
 
+    public boolean isUseHighContrastTheme() {
+        return useHighContrastTheme;
+    }
+
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
@@ -104,4 +108,7 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
         this.brightnessLevel = brightnessLevel;
     }
 
+    public void setUseHighContrastTheme(boolean useHighContrastTheme) {
+        this.useHighContrastTheme = useHighContrastTheme;
+    }
 }

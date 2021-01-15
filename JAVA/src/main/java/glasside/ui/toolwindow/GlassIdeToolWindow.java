@@ -20,6 +20,7 @@ public class GlassIdeToolWindow {
     private JLabel opacityLabel;
     private JLabel brightnessLabel;
     private JLabel blurTypeLabel;
+    private JCheckBox highContrastCheckBox;
 
     private boolean isUiUpdating = false;
     private final PluginMain pluginMain;
@@ -48,6 +49,12 @@ public class GlassIdeToolWindow {
         enableCheckBox.addItemListener(e -> {
             if (!isUiUpdating)
                 onEnableCheckBoxChange(e.getStateChange() == ItemEvent.SELECTED);
+        });
+
+
+        highContrastCheckBox.addItemListener(e -> {
+            if (!isUiUpdating)
+                onEnableHighContrastModeChange(e.getStateChange() == ItemEvent.SELECTED);
         });
 
     }
@@ -87,11 +94,24 @@ public class GlassIdeToolWindow {
         setBlurTypeLabelText(level);
     }
 
+    private void onEnableHighContrastModeChange(boolean enabled) {
+
+        if (!pluginMain.isGlassEffectEnabled()) {
+            onEnableCheckBoxChange(enabled);
+        } else {
+            try {
+                pluginMain.setEnableHighContrast(enabled);
+            } catch (RuntimeException e) {
+                PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
+            }
+        }
+    }
+
     private void onEnableCheckBoxChange(boolean enabled) {
         try {
             if (enabled)
                 pluginMain.enableGlassMode(opacitySlider.getValue(), brightnessSlider.getValue(),
-                        blurTypeSlider.getValue());
+                        blurTypeSlider.getValue(), highContrastCheckBox.isSelected());
             else
                 pluginMain.disableGlassMode();
 
@@ -100,7 +120,6 @@ public class GlassIdeToolWindow {
             PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
         }
     }
-
 
 
     // endregion
@@ -115,6 +134,7 @@ public class GlassIdeToolWindow {
         brightnessSlider.setValue(pluginMain.getBrightnessLevel());
         blurTypeSlider.setValue(pluginMain.getBlurType());
         enableCheckBox.setSelected(pluginMain.isGlassEffectEnabled());
+        highContrastCheckBox.setSelected(pluginMain.isEnableHighContrast());
         isUiUpdating = false;
 
         setOpacityLabelText(pluginMain.getOpacityLevel());

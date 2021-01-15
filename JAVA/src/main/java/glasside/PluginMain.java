@@ -2,6 +2,7 @@ package glasside;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import glasside.helpers.ThemeHelper;
 import glasside.helpers.WindowsHelpers;
 import glasside.ui.toolwindow.GlassIdeToolWindow;
 
@@ -20,10 +21,11 @@ public class PluginMain {
     private ScheduledFuture<?> rendererMaintainerSF = null;
     private final GlassIdeStorage glassIdeStorage;
 
-    private boolean isGlassEnabled = false;
-    private int opacityLevel = 30;
-    private int brightnessLevel = 30;
-    private int blurType = 0;
+    private boolean isGlassEnabled;
+    private int opacityLevel;
+    private int brightnessLevel;
+    private int blurType;
+    private boolean enableHighContrast;
 
 
     public PluginMain(Project project) {
@@ -37,9 +39,11 @@ public class PluginMain {
         this.brightnessLevel = glassIdeStorage.getBrightnessLevel();
         this.blurType = glassIdeStorage.getBlurType();
         this.isGlassEnabled = glassIdeStorage.isEnabled();
+        this.enableHighContrast = glassIdeStorage.isUseHighContrastTheme();
 
         if (this.isGlassEnabled)
-            enableGlassMode(opacityLevel, brightnessLevel, blurType);
+            enableGlassMode(opacityLevel, brightnessLevel, blurType, enableHighContrast);
+
 
     }
 
@@ -74,37 +78,44 @@ public class PluginMain {
             throw new RuntimeException(initErrorMsg);
     }
 
-    public void enableGlassMode(int opacityLevel, int brightnessLevel, int blurType) {
+    public void enableGlassMode(int opacityLevel, int brightnessLevel, int blurType, boolean enableHighContrast) {
         if (isGlassEnabled)
             return;
 
         abortIfInitError();
 
-        try {
-            getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel, blurType);
+        getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel, blurType);
 
-            rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
-                    scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
-                            RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
-                            SECONDS);
+        if (enableHighContrast)
+            ThemeHelper.enableHighContrastMode();
 
-            this.opacityLevel = opacityLevel;
-            this.brightnessLevel = brightnessLevel;
-            this.blurType = blurType;
-            this.isGlassEnabled = true;
-        } catch (Exception e) {
+        this.opacityLevel = opacityLevel;
+        this.brightnessLevel = brightnessLevel;
+        this.blurType = blurType;
+        this.enableHighContrast = enableHighContrast;
+        this.isGlassEnabled = true;
 
-        }
+        rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
+                scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
+                        RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
+                        SECONDS);
+
+
     }
 
     public void disableGlassMode() {
-        if (renderer != null)
-            getRenderer().disableGlassEffect();
 
         if (rendererMaintainerSF != null) {
             rendererMaintainerSF.cancel(true);
             rendererMaintainerSF = null;
         }
+
+        if (ThemeHelper.isIsHighContrastEnabled())
+            ThemeHelper.disableHighContrastMode();
+
+        if (renderer != null)
+            getRenderer().disableGlassEffect();
+
 
         isGlassEnabled = false;
     }
@@ -130,10 +141,25 @@ public class PluginMain {
             getRenderer().setBrightnessLevel(brightnessLevel);
     }
 
+    public void setEnableHighContrast(boolean enableHighContrast) {
+        abortIfInitError();
+        this.enableHighContrast = enableHighContrast;
+        if (!isGlassEnabled) return;
+
+        if (enableHighContrast) {
+            if (!ThemeHelper.isIsHighContrastEnabled())
+                ThemeHelper.enableHighContrastMode();
+        } else {
+            if (ThemeHelper.isIsHighContrastEnabled())
+                ThemeHelper.disableHighContrastMode();
+        }
+
+    }
+
     // endregion
 
     // region getters & setters
-    
+
     public GlassIdeToolWindow getGlassIdeToolWindow() {
         return glassIdeToolWindow;
     }
@@ -153,6 +179,11 @@ public class PluginMain {
     public boolean isGlassEffectEnabled() {
         return isGlassEnabled;
     }
+
+    public boolean isEnableHighContrast() {
+        return enableHighContrast;
+    }
+
 
     // endregion
 

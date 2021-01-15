@@ -44,16 +44,11 @@ public class RendererMaintainer implements Runnable {
 
         try {
 
-            boolean isCudaEnabled;
             GlassIdeStorage glassIdeStorage = GlassIdeStorage.getInstance();
-            if (glassIdeStorage != null)
-                isCudaEnabled = glassIdeStorage.isCudaEnabled();
-            else
-                isCudaEnabled = GlassIdeStorage.DEFAULT_CUDA_ENABLED;
 
             // Start the effect again
             renderer.enableGlassEffect(
-                    isCudaEnabled,
+                    glassIdeStorage.isCudaEnabled(),
                     pluginMain.getOpacityLevel(),
                     pluginMain.getBrightnessLevel(),
                     pluginMain.getBlurType());
