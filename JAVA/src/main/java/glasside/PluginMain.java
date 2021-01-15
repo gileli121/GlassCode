@@ -2,6 +2,7 @@ package glasside;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import glasside.exceptions.GetIdeWindowException;
 import glasside.helpers.ThemeHelper;
 import glasside.helpers.WindowsHelpers;
 import glasside.ui.toolwindow.GlassIdeToolWindow;
@@ -35,15 +36,20 @@ public class PluginMain {
 
     // region init methods
     public void init() {
+
+
         this.opacityLevel = glassIdeStorage.getOpacityLevel();
         this.brightnessLevel = glassIdeStorage.getBrightnessLevel();
         this.blurType = glassIdeStorage.getBlurType();
-        this.isGlassEnabled = glassIdeStorage.isEnabled();
         this.enableHighContrast = glassIdeStorage.isUseHighContrastTheme();
+        this.isGlassEnabled = glassIdeStorage.isEnabled();
 
-        if (this.isGlassEnabled)
-            enableGlassMode(opacityLevel, brightnessLevel, blurType, enableHighContrast);
-
+        if (isGlassEnabled) {
+            rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
+                    scheduleWithFixedDelay(new PluginThread(this),
+                            RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
+                            SECONDS);
+        }
 
     }
 
@@ -55,13 +61,12 @@ public class PluginMain {
         disableGlassMode(); // This will disable the glass mode if needed
     }
 
-    private Renderer getRenderer() {
+    public Renderer getRenderer() {
         if (renderer == null) {
             // Get the window handle for Windows
             long ideWindowId = WindowsHelpers.getIdeWindowOfProject(project);
             if (ideWindowId == 0) {
-                initErrorMsg = "Failed to detect the IDE window handle";
-                throw new RuntimeException(initErrorMsg);
+                throw new GetIdeWindowException("Failed to detect the IDE window handle");
             }
             renderer = new Renderer(ideWindowId);
         }
@@ -96,7 +101,7 @@ public class PluginMain {
         this.isGlassEnabled = true;
 
         rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
-                scheduleWithFixedDelay(new PluginThread(this, renderer),
+                scheduleWithFixedDelay(new PluginThread(this),
                         RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
                         SECONDS);
 

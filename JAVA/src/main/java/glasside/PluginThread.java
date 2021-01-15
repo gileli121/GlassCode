@@ -1,5 +1,6 @@
 package glasside;
 
+import glasside.exceptions.GetIdeWindowException;
 import glasside.helpers.PluginUiHelpers;
 import glasside.helpers.ThemeHelper;
 import glasside.ui.toolwindow.GlassIdeToolWindow;
@@ -7,14 +8,12 @@ import glasside.ui.toolwindow.GlassIdeToolWindow;
 import javax.swing.*;
 
 public class PluginThread implements Runnable {
-    private final Renderer renderer;
     private final PluginMain pluginMain;
     private static final int MAX_CRASH_COUNT = 5;
     private int attempts = 0;
 
-    public PluginThread(PluginMain pluginMain, Renderer renderer) {
+    public PluginThread(PluginMain pluginMain) {
         this.pluginMain = pluginMain;
-        this.renderer = renderer;
     }
 
     @Override
@@ -36,7 +35,14 @@ public class PluginThread implements Runnable {
             }
         }
 
-        if (!renderer.isGlassEffectRunning()) {
+        Renderer renderer = null;
+        try {
+            renderer = pluginMain.getRenderer();
+        } catch (GetIdeWindowException ignored) {
+            // Ignored - Try again next time. Maybe next time the IDE window will loaded and show
+        }
+
+        if (renderer != null && !renderer.isGlassEffectRunning()) {
 
             // Count this attempt
             attempts++;

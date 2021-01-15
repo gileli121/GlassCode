@@ -4,6 +4,7 @@ package glasside.ui.toolwindow;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import glasside.GlassIdeStorage;
 import glasside.PluginMain;
 import glasside.helpers.PluginUiHelpers;
 
@@ -21,6 +22,8 @@ public class GlassIdeToolWindow {
     private JLabel brightnessLabel;
     private JLabel blurTypeLabel;
     private JCheckBox highContrastCheckBox;
+    private JButton saveAsDefaultsButton;
+    private JCheckBox enableOnStartupCheckBox;
 
     private boolean isUiUpdating = false;
     private final PluginMain pluginMain;
@@ -56,6 +59,8 @@ public class GlassIdeToolWindow {
             if (!isUiUpdating)
                 onEnableHighContrastModeChange(e.getStateChange() == ItemEvent.SELECTED);
         });
+
+        saveAsDefaultsButton.addActionListener(e -> onSaveSettingsEvent());
 
     }
 
@@ -95,15 +100,13 @@ public class GlassIdeToolWindow {
     }
 
     private void onEnableHighContrastModeChange(boolean enabled) {
+        if (!pluginMain.isGlassEffectEnabled())
+            return;
 
-        if (!pluginMain.isGlassEffectEnabled()) {
-            onEnableCheckBoxChange(enabled);
-        } else {
-            try {
-                pluginMain.enableHighContrastMode(enabled);
-            } catch (RuntimeException e) {
-                PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
-            }
+        try {
+            pluginMain.enableHighContrastMode(enabled);
+        } catch (RuntimeException e) {
+            PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
         }
     }
 
@@ -121,6 +124,19 @@ public class GlassIdeToolWindow {
         }
     }
 
+    private void onSaveSettingsEvent() {
+
+        GlassIdeStorage storage = GlassIdeStorage.getInstance();
+        storage.setEnabled(enableOnStartupCheckBox.isSelected());
+        storage.setOpacityLevel(opacitySlider.getValue());
+        storage.setBlurType(blurTypeSlider.getValue());
+        storage.setBrightnessLevel(brightnessSlider.getValue());
+        storage.setUseHighContrastTheme(highContrastCheckBox.isSelected());
+
+        PluginUiHelpers.showInfoNotification("Settings saved!");
+//        System.out.println(1);
+    }
+
 
     // endregion
 
@@ -130,10 +146,12 @@ public class GlassIdeToolWindow {
     public void updateUi() {
 
         isUiUpdating = true;
+        GlassIdeStorage storage = GlassIdeStorage.getInstance();
         opacitySlider.setValue(pluginMain.getOpacityLevel());
         brightnessSlider.setValue(pluginMain.getBrightnessLevel());
         blurTypeSlider.setValue(pluginMain.getBlurType());
         enableCheckBox.setSelected(pluginMain.isGlassEffectEnabled());
+        enableOnStartupCheckBox.setSelected(storage.isEnabled());
         highContrastCheckBox.setSelected(pluginMain.isEnableHighContrast());
         isUiUpdating = false;
 
