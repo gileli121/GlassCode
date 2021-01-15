@@ -14,24 +14,79 @@
     <!-- Text to display as description on Preferences/Settings | Plugin page -->
     <description>
         <![CDATA[
-      GlassIDE (For Windows)
-      <br><br>
-      This plugin allows you to make your IDE to be fully transparent while keeping the code sharp
-      and bright.
-      <br><br>
-      Currently this plugin is in alpha stage and I am working to implement more functionality in the
-      future.
-      <br><br>
-      For now, there is only Windows version.
-      If this plugin will become very popular, I will work also to support Linux and Mac
-      <br><br>
-      Enjoy!
+            <style>
+            img {
+              width: 600px;
+            }
+            </style>
+            <h1 id="glasside">GlassIDE</h1>
+            <p>This plugin allows you to make your IDE to be fully transparent while keeping the code sharp and bright.</p>
+            <h2 id="introduction">Introduction</h2>
+            <p>Adjust the opacity level while keeping the text sharp and bright</p>
+            <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-change-opacity-600px.gif" width="600" alt="" /></p>
+            <p>Using GlassIDE plugin with combination of LiveEdit (WebStorm IDE)</p>
+            <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/live-edit-with-glass-ide-600px.gif" width="600" alt="" /></p>
+            <p>Using GlassIDE in Java (IntelliJ IDE)</p>
+            <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-java-preview-1-600px.png" width="600" alt="" /></p>
+            <p>Using GlassIDE with blur effect set to high</p>
+            <br>
+            <img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-java-high-blur-preview-600px.png" width="600" alt="" />
+            <br>
+            <p>&nbsp;</p>
+            <h2 id="getting-started">Getting started</h2>
+            <ol>
+            <li>Download GlassIDE plugin</li>
+            <li>Install it in your IDE</li>
+            <li>It is recommended to use the high contrast theme for the best result or at lest any dark theme. My suggestion is to enable the high contrast theme</li>
+            </ol>
+            <h2 id="how-to-use">How to use</h2>
+            <p>Currently, the only way to use this plugin is to click on the GlassIDE tab here:
+            <br>
+            <img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-menu.png" width="600" alt="" /></p>
+            <br>
+            <p>After that, the following menu will open:</p>
+            <br>
+            <img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-menu-panel.png" width="600" alt="" />
+            <br>
+            <p>Click on the <code>Enable</code> checkbox to enable the effect.</p>
+            <p>In this menu, the following options available:</p>
+            <ul>
+            <li><code>Opacity</code> - This is the opacity of the background only. The image processing algorithm is smart to not apply the opacity to the texts or anything that is not background</li>
+            <li><code>Amount of brightness behind the window</code> - This will reduce or decrease the light that you can see behind the window. This effect give similar result like when the opacity is high value and the theme is dark. In general it is suggested to set this filter to 70% and the opacity to 30%-60% (it depends on what you like)</li>
+            <li><code>Type of blur behind the window</code> - This effect have 3 options: <code>None</code>, <code>Medium</code> and <code>High</code>. <br />When it set to <code>None</code>, there is no blur effect at all. For <code>Medium</code> and <code>High</code> it looks as following:</li>
+            </ul>
+            <h4 id="medium-blur-">Medium blur:</h4>
+            <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-blur-medium-600px.png" width="600" alt="" /></p>
+            <h4 id="high-blur-">High blur:</h4>
+            <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-blur-high-600px.png" width="600" alt="" /></p>
+            <h2 id="supported-ides">Supported IDEs</h2>
+            <ul>
+            <li>IntelliJ</li>
+            <li>WebStorm</li>
+            <li>Phpstorm</li>
+            <li>Other JetBrains IDEs (Not tested)</li>
+            </ul>
+            <h2 id="supported-operating-systems">Supported Operating Systems</h2>
+            <ul>
+            <li>Windows 10 64bit from version 2004 (20H1) and above</li>
+            </ul>
+            <h2 id="notes">Notes</h2>
+            <ul>
+            <li>Currently this plugin is supported only in Windows 10 v2004 and above</li>
+            <li>It is highly recommended to use the "High contrast" theme when using the glass effect. The transparency</li>
+            <li>Source code of the plugin is fully removed</li>
+            </ul>
     ]]>
     </description>
     <change-notes>
         <![CDATA[
-      <ul>
-      </ul>
+            <p>v1.1.0</p>
+            <ul>
+                <li>Added checkbox to enable the effect on startup</li>
+                <li>Added "High Contrast" option when enabling transparency</li>
+                <li>Added option to save the transparency settings</li>
+                <li>the interface was reorganized and simplified</li>
+            </ul>
     ]]>
     </change-notes>
 
