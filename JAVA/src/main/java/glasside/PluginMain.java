@@ -86,7 +86,7 @@ public class PluginMain {
 
         getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel, blurType);
 
-        if (enableHighContrast)
+        if (enableHighContrast && PluginInitializer.getOpenedProjectsCount() <= 1)
             ThemeHelper.enableHighContrastMode();
 
         this.opacityLevel = opacityLevel;
@@ -96,7 +96,7 @@ public class PluginMain {
         this.isGlassEnabled = true;
 
         rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
-                scheduleWithFixedDelay(new RendererMaintainer(this, renderer),
+                scheduleWithFixedDelay(new PluginThread(this, renderer),
                         RENDERER_SCHEDULER_RUN_EVERY_SECONDS, RENDERER_SCHEDULER_RUN_EVERY_SECONDS,
                         SECONDS);
 
@@ -141,13 +141,13 @@ public class PluginMain {
             getRenderer().setBrightnessLevel(brightnessLevel);
     }
 
-    public void setEnableHighContrast(boolean enableHighContrast) {
+    public void enableHighContrastMode(boolean enableHighContrast) {
         abortIfInitError();
         this.enableHighContrast = enableHighContrast;
         if (!isGlassEnabled) return;
 
         if (enableHighContrast) {
-            if (!ThemeHelper.isIsHighContrastEnabled())
+            if (!ThemeHelper.isIsHighContrastEnabled() && PluginInitializer.getOpenedProjectsCount() <= 1)
                 ThemeHelper.enableHighContrastMode();
         } else {
             if (ThemeHelper.isIsHighContrastEnabled())

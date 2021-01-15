@@ -100,7 +100,7 @@ public class GlassIdeToolWindow {
             onEnableCheckBoxChange(enabled);
         } else {
             try {
-                pluginMain.setEnableHighContrast(enabled);
+                pluginMain.enableHighContrastMode(enabled);
             } catch (RuntimeException e) {
                 PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
             }

@@ -9,38 +9,47 @@ import org.jetbrains.annotations.NotNull;
 
 public class PluginInitializer implements ProjectManagerListener {
 
-  /**
-   * Invoked on project open.
-   *
-   * @param project opening project
-   */
-  @Override
-  public void projectOpened(@NotNull Project project) {
-    // Ensure this isn't part of testing
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      return;
+    private static int openedProjects = 0;
+
+    /**
+     * Invoked on project open.
+     *
+     * @param project opening project
+     */
+    @Override
+    public void projectOpened(@NotNull Project project) {
+        // Ensure this isn't part of testing
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            return;
+        }
+
+        openedProjects++;
+
+        PluginMain pluginMain = ServiceManager.getService(project, PluginMain.class);
+        pluginMain.init();
+
     }
 
-    PluginMain pluginMain = ServiceManager.getService(project, PluginMain.class);
-    pluginMain.init();
+    /**
+     * Invoked on project close.
+     *
+     * @param project closing project
+     */
+    @Override
+    public void projectClosed(@NotNull Project project) {
+        // Ensure this isn't part of testing
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            return;
+        }
 
+        openedProjects--;
 
-  }
-
-  /**
-   * Invoked on project close.
-   *
-   * @param project closing project
-   */
-  @Override
-  public void projectClosed(@NotNull Project project) {
-    // Ensure this isn't part of testing
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      return;
+        PluginMain pluginMain = ServiceManager.getService(project, PluginMain.class);
+        pluginMain.dispose();
     }
 
-    PluginMain pluginMain = ServiceManager.getService(project, PluginMain.class);
-    pluginMain.dispose();
-  }
+    public static int getOpenedProjectsCount() {
+        return openedProjects;
+    }
 
 }
