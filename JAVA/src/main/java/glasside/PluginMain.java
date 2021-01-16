@@ -31,18 +31,17 @@ public class PluginMain {
 
     public PluginMain(Project project) {
         this.project = project;
+
         this.glassIdeStorage = GlassIdeStorage.getInstance();
-    }
-
-    // region init methods
-    public void init() {
-
-
         this.opacityLevel = glassIdeStorage.getOpacityLevel();
         this.brightnessLevel = glassIdeStorage.getBrightnessLevel();
         this.blurType = glassIdeStorage.getBlurType();
         this.enableHighContrast = glassIdeStorage.isUseHighContrastTheme();
         this.isGlassEnabled = glassIdeStorage.isEnabled();
+    }
+
+    // region init methods
+    public void init() {
 
         if (isGlassEnabled) {
             rendererMaintainerSF = AppExecutorUtil.getAppScheduledExecutorService().
