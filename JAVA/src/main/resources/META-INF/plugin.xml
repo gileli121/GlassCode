@@ -8,6 +8,8 @@
     <!-- Text to display as name on Preferences/Settings | Plugin page -->
     <name>GlassIDE (For Windows)</name>
 
+    <product-descriptor code="PGLASSIDEWIN" release-date="20210121" release-version="20201"/>
+
     <!-- Indicate this plugin can be loaded in all IntelliJ Platform-based products. -->
     <depends>com.intellij.modules.platform</depends>
 
