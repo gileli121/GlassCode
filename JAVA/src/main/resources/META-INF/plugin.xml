@@ -80,7 +80,7 @@
     </description>
     <change-notes>
         <![CDATA[
-            <p>v1.1.0</p>
+            <p>v1.1.1</p>
             <ul>
                 <li>Added checkbox to enable the effect on startup</li>
                 <li>Added "High Contrast" option when enabling transparency</li>

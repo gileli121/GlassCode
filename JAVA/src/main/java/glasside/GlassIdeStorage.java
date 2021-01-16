@@ -22,12 +22,14 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
     private static final boolean DEFAULT_IS_GLASS_ENABLED = false;
     private static final boolean DEFAULT_USE_CONTRAST_THEME = true;
 
+    private boolean wasSavedBefore = false;
     private int opacityLevel = DEFAULT_OPACITY;
     private int brightnessLevel = DEFAULT_BRIGHTNESS;
     private int blurType = DEFAULT_BLUR_TYPE;
     private boolean isEnabled = DEFAULT_IS_GLASS_ENABLED;
     private boolean isCudaEnabled = DEFAULT_CUDA_ENABLED;
     private boolean useHighContrastTheme = DEFAULT_USE_CONTRAST_THEME;
+
 
     public static GlassIdeStorage getInstance() {
         return ServiceManager.getService(GlassIdeStorage.class);
@@ -46,7 +48,6 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
 
     @Override
     public void noStateLoaded() {
-
     }
 
     @Override
@@ -65,27 +66,28 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
 
 
     public int getBlurType() {
-        return blurType;
+        return wasSavedBefore ? blurType : DEFAULT_BLUR_TYPE;
     }
 
     public int getBrightnessLevel() {
-        return brightnessLevel;
+        return wasSavedBefore ? brightnessLevel : DEFAULT_BRIGHTNESS;
     }
 
     public int getOpacityLevel() {
-        return opacityLevel;
+        return wasSavedBefore ? opacityLevel : DEFAULT_OPACITY;
     }
 
     public boolean isCudaEnabled() {
-        return isCudaEnabled;
+        return wasSavedBefore ? isCudaEnabled : DEFAULT_CUDA_ENABLED;
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return wasSavedBefore ? isEnabled : DEFAULT_IS_GLASS_ENABLED;
     }
 
     public void setCudaEnabled(boolean cudaEnabled) {
         isCudaEnabled = cudaEnabled;
+        wasSavedBefore = true;
     }
 
     public boolean isUseHighContrastTheme() {
@@ -94,21 +96,28 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+        wasSavedBefore = true;
     }
 
     public void setOpacityLevel(int opacityLevel) {
         this.opacityLevel = opacityLevel;
+        wasSavedBefore = true;
     }
 
     public void setBlurType(int blurType) {
         this.blurType = blurType;
+        wasSavedBefore = true;
     }
 
     public void setBrightnessLevel(int brightnessLevel) {
         this.brightnessLevel = brightnessLevel;
+        wasSavedBefore = true;
     }
 
     public void setUseHighContrastTheme(boolean useHighContrastTheme) {
         this.useHighContrastTheme = useHighContrastTheme;
+        wasSavedBefore = true;
     }
+
+
 }
