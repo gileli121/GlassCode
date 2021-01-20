@@ -18,7 +18,7 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
     private static final int DEFAULT_OPACITY = 70;
     private static final int DEFAULT_BRIGHTNESS = 70;
     private static final int DEFAULT_BLUR_TYPE = 0;
-    private static final int DEFAULT_TEXT_EXTRA_BRIGHTNESS = 0;
+    private static final int DEFAULT_TEXT_EXTRA_BRIGHTNESS = 70;
     private static final boolean DEFAULT_CUDA_ENABLED = true;
     private static final boolean DEFAULT_IS_GLASS_ENABLED = false;
     private static final boolean DEFAULT_USE_CONTRAST_THEME = true;
@@ -78,7 +78,7 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
     public int getOpacityLevel() {
         return wasSavedBefore ? opacityLevel : DEFAULT_OPACITY;
     }
-    
+
     public int getTextExtraBrightnessLevel() {
         return wasSavedBefore ? textExtraBrightnessLevel : DEFAULT_TEXT_EXTRA_BRIGHTNESS;
     }
