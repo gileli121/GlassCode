@@ -846,16 +846,21 @@ namespace process_layer_cpu
 						if (avg_shapes_count)
 							avg_shapes_avg_color /= avg_shapes_count;
 
+						// TODO: Part disabled because the logic to support bright background is broken
+						// float scalar;
+						// if (avg_shapes_avg_color >= reduced_color || shape_max_darkness == 255)
+						// 	scalar = 255.0 / static_cast<float>(shape_max_brightness);
+						// else
+						// 	scalar = 255.0 / static_cast<float>(255 - shape_max_darkness);
 
-						float scalar;
-						if (avg_shapes_avg_color >= reduced_color || shape_max_darkness == 255)
-							scalar = 255.0 / static_cast<float>(shape_max_brightness);
-						else
-							scalar = 255.0 / static_cast<float>(255 - shape_max_darkness);
+						float scalar = 255.0 / static_cast<float>(shape_max_brightness);
 
+
+						scalar *= shapes_level;
+						if (scalar <= 1.0)
+							continue;
 
 						const auto is_shapes_dark = avg_shapes_avg_color <= reduced_color;
-
 
 						for (auto y2 = y; y2 < y_max; y2++)
 							for (auto x2 = x; x2 < x_max; x2++)
@@ -872,9 +877,11 @@ namespace process_layer_cpu
 								{
 									if (is_shapes_dark)
 									{
-										pixels[point] = 255 - pixels[point];
-										pixels[point + 1] = 255 - pixels[point + 1];
-										pixels[point + 2] = 255 - pixels[point + 2];
+										// TODO: I set it to ignore any case of non-dark background because I should not support it
+										continue;
+										// pixels[point] = 255 - pixels[point];
+										// pixels[point + 1] = 255 - pixels[point + 1];
+										// pixels[point + 2] = 255 - pixels[point + 2];
 									}
 
 
@@ -892,6 +899,7 @@ namespace process_layer_cpu
 
 									if (max > 255)
 									{
+										
 										const auto reduce_scalar = 255 / static_cast<float>(max);
 										b *= reduce_scalar;
 										g *= reduce_scalar;

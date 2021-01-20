@@ -372,12 +372,16 @@ namespace process_layer_gpu
 			{
 				if (avg_shapes_avg_color < reduced_color)
 				{
-					pixels[thread_point] = ~pixels[thread_point];
-					pixels[thread_point + 1] = ~pixels[thread_point + 1];
-					pixels[thread_point + 2] = ~pixels[thread_point + 2];
 
-					avg_color = (((pixels[thread_point] + pixels[thread_point + 1] + pixels[thread_point + 2]) / 3) /
-						GLASS_MODE_COLOR_DIV) * GLASS_MODE_COLOR_DIV;
+					// TODO: I set it to ignore any case of non-dark background because I should not support it
+					return;
+					
+					// pixels[thread_point] = ~pixels[thread_point];
+					// pixels[thread_point + 1] = ~pixels[thread_point + 1];
+					// pixels[thread_point + 2] = ~pixels[thread_point + 2];
+					//
+					// avg_color = (((pixels[thread_point] + pixels[thread_point + 1] + pixels[thread_point + 2]) / 3) /
+					// 	GLASS_MODE_COLOR_DIV) * GLASS_MODE_COLOR_DIV;
 				}
 			}
 			else
@@ -424,40 +428,46 @@ namespace process_layer_gpu
 				atomicMax(&shape_max_brightness, avg_color);
 			}
 
-
-			__syncthreads();
-
-			if (is_shape_color)
+			if (texts_level > 0)
 			{
-				auto scalar = 255 / static_cast<float>(shape_max_brightness);
-
-				avg_color *= scalar;
-				//if (avg_color > 255) avg_color = 255;
-
-				int b = pixels[thread_point];
-				int g = pixels[thread_point + 1];
-				int r = pixels[thread_point + 2];
-
-
-				b *= scalar;
-				g *= scalar;
-				r *= scalar;
-
-				auto max = r > g ? r : g;
-				if (b > max) max = b;
-
-				if (max > 255)
+				__syncthreads();
+			
+				if (is_shape_color)
 				{
-					const auto reduce_scalar = 255 / static_cast<float>(max);
-					b *= reduce_scalar;
-					g *= reduce_scalar;
-					r *= reduce_scalar;
+					auto scalar = 255.0 / static_cast<float>(shape_max_brightness);
+
+					scalar *= texts_level;
+					if (scalar <= 1.0)
+						return;
+					
+					//if (avg_color > 255) avg_color = 255;
+			
+					int b = pixels[thread_point];
+					int g = pixels[thread_point + 1];
+					int r = pixels[thread_point + 2];
+			
+			
+					b *= scalar;
+					g *= scalar;
+					r *= scalar;
+			
+					auto max = r > g ? r : g;
+					if (b > max) max = b;
+			
+					if (max > 255)
+					{
+						const auto reduce_scalar = 255 / static_cast<float>(max);
+						b *= reduce_scalar;
+						g *= reduce_scalar;
+						r *= reduce_scalar;
+					}
+		
+			
+					pixels[thread_point] = b;
+					pixels[thread_point + 1] = g;
+					pixels[thread_point + 2] = r;
 				}
-
-
-				pixels[thread_point] = b;
-				pixels[thread_point + 1] = g;
-				pixels[thread_point + 2] = r;
+			
 			}
 		}
 
@@ -470,7 +480,7 @@ namespace process_layer_gpu
 				kernel_perform_images_opacity
 					<< < ((y_end) * (x_end) * 4) / GLASS_MODE_WARP_SIZE, GLASS_MODE_WARP_SIZE >> >
 					(d_pixels, x_end, y_end, (y_end - 1) * x_end,
-					 d_image_area_data, images_level);
+					 d_image_area_data, images_level); 
 
 				cuda_result = cudaDeviceSynchronize();
 				if (cuda_result != cudaSuccess)

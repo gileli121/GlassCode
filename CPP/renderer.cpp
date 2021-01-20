@@ -600,7 +600,7 @@ namespace renderer
 
 
 			image_area_data = process_layer_cpu::map_images::map_images(force_render);
-			process_layer_cpu::end_process();
+			process_layer_cpu::end_process(); 
 
 			graphic_device::copy_texture(gpu_texture, cpu_texture);
 		}
@@ -617,7 +617,7 @@ namespace renderer
 		}
 
 		if (!filter_images)
-		{
+		{ 
 			auto error = false;
 			new_frame = force_render || process_layer_gpu::is_new_pixels(error);
 			if (error)
@@ -659,7 +659,7 @@ namespace renderer
 		}
 
 		if (glass_mode)
-		{
+		{ 
 			if (!process_layer_gpu::glass_effect::map_shapes())
 			{
 				std::cout << "process_layer_gpu::glass_effect::map_shapes(*) failed";

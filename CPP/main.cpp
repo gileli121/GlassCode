@@ -20,26 +20,29 @@ LRESULT CALLBACK window_proc(
 #define ARGS_WINDOW_HANDLE_IDX 2
 #define ARGS_OPACITY_LEVEL_IDX 3
 #define ARGS_BRIGHTNESS_LEVEL_IDX 4
-#define ARGS_BLUR_TYPE_IDX 5
-#define ARGS_COUNT 5
+#define ARGS_TEXT_EXTRA_BRIGHTNESS_LEVEL_IDX 5
+#define ARGS_BLUR_TYPE_IDX 6
+#define ARGS_COUNT 6
 
 
 #define COMMAND_EXIT 0
 #define COMMAND_SET_OPACITY 1
 #define COMMAND_SET_BRIGHTNESS 2
-#define COMMAND_SET_BLUR_TYPE 3
+#define COMMAND_SET_TEXT_BRIGHTNESS 3
+#define COMMAND_SET_BLUR_TYPE 4
 
 
 #ifndef _DEBUG
 HWND target_hwnd = nullptr;
 #else
-HWND target_hwnd = reinterpret_cast<HWND>(0x0000000000CA0688);
+HWND target_hwnd = reinterpret_cast<HWND>(0x00000000001E1282);
 #endif
 
-bool is_cuda_enabled = false;
-int opacity_level = 0;
-int brightness_level = 50;
+bool is_cuda_enabled = true;
+int opacity_level = 70;
+int brightness_level = 70;
 int blur_type = 0;
+int text_brightness = 100;
 
 bool should_exit = false;
 
@@ -48,21 +51,25 @@ int main(const int argc, char* argv[])
 {
 	plog::init(plog::debug, new plog::ConsoleAppender<plog::FuncMessageFormatter>);
 
-// #ifndef _DEBUG
+	// This is must to fix issue in 4k that the DPI is making the display layer much bigger than the window
+	SetProcessDPIAware();
+	
+#ifndef _DEBUG
 	if (argc - 1 < ARGS_COUNT)
 	{
 		std::cout << "There are missing arguments. Need at least " << ARGS_COUNT << std::endl;
 		return EXIT_FAILURE;
 	}
-
+	
 
 	std::cout << "Reading arguments";
 	target_hwnd = reinterpret_cast<HWND>(atoi(argv[ARGS_WINDOW_HANDLE_IDX]));
 	is_cuda_enabled = atoi(argv[ARGS_IS_CUDA_ENABLED]) != 0;
 	opacity_level = atoi(argv[ARGS_OPACITY_LEVEL_IDX]);
 	brightness_level = atoi(argv[ARGS_BRIGHTNESS_LEVEL_IDX]);
+	text_brightness = atoi(argv[ARGS_TEXT_EXTRA_BRIGHTNESS_LEVEL_IDX]);
 	blur_type = atoi(argv[ARGS_BLUR_TYPE_IDX]);
-// #endif
+#endif
 
 
 	std::cout << "Checking arguments\n";
@@ -87,6 +94,12 @@ int main(const int argc, char* argv[])
 	if (blur_type < 0 || blur_type > 2)
 	{
 		std::cout << "Invalid blur type provided\n";
+		return EXIT_FAILURE;
+	}
+
+	if (text_brightness < 0 || text_brightness > 100)
+	{
+		std::cout << "Invalid text brightness provided\n";
 		return EXIT_FAILURE;
 	}
 
@@ -132,7 +145,8 @@ int main(const int argc, char* argv[])
 			brightness_level / 100.0,
 			false,
 			opacity_level / 100.0,
-			0.0
+			0.0,
+			text_brightness / 100.0
 		))
 	{
 		std::cout << "Failed to enable glass mode\n";
@@ -197,6 +211,9 @@ LRESULT CALLBACK window_proc(
 			break;
 		case COMMAND_SET_BRIGHTNESS:
 			renderer::glass_set_brightness_level(request->value1 / 100.0);
+			break;
+		case COMMAND_SET_TEXT_BRIGHTNESS:
+			renderer::glass_set_shapes_level(request->value1 / 100.0);
 			break;
 		case COMMAND_SET_BLUR_TYPE:
 			renderer::set_glass_blur_level(static_cast<renderer::GlassBlurType>(request->value1));
