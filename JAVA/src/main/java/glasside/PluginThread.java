@@ -68,6 +68,7 @@ public class PluginThread implements Runnable {
                         glassIdeStorage.isCudaEnabled(),
                         pluginMain.getOpacityLevel(),
                         pluginMain.getBrightnessLevel(),
+                        pluginMain.getTextExtraBrightnessLevel(),
                         pluginMain.getBlurType());
 
             } catch (Exception e) {

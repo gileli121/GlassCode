@@ -35,18 +35,21 @@ public class Renderer {
         this.osBuildNumber = WindowsHelpers.getWindowsBuildNumber();
     }
 
+
     public static class CommandId {
         public static int EXIT = 0;
         public static int SET_OPACITY = 1;
         public static int SET_BRIGHTNESS = 2;
-        public static int SET_BLUR_TYPE = 3;
+        public static int SET_TEXT_BRIGHTNESS = 3;
+        public static int SET_BLUR_TYPE = 4;
     }
 
 
     // endregion
 
     // region API/Public methods
-    public void enableGlassEffect(boolean isCudaEnabled, int opacityLevel, int brightnessLevel, int blurType) {
+    public void enableGlassEffect(boolean isCudaEnabled, int opacityLevel, int brightnessLevel, int textExtraBrightnessLevel,
+                                  int blurType) {
 
         if (isGlassEffectRunning())
             return;
@@ -73,6 +76,7 @@ public class Renderer {
                                     String.valueOf(windowId),
                                     String.valueOf(opacityLevel),
                                     String.valueOf(brightnessLevel),
+                                    String.valueOf(textExtraBrightnessLevel),
                                     String.valueOf(blurType)
                             ).start();
                 } catch (IOException e) {
@@ -194,6 +198,11 @@ public class Renderer {
     public void setBrightnessLevel(int brightnessLevel) {
         abortIfNotEnabled();
         sendMessage(CommandId.SET_BRIGHTNESS, brightnessLevel);
+    }
+
+    public void setTextExtraBrightnessLevel(int textExtraBrightnessLevel) {
+        abortIfNotEnabled();
+        sendMessage(CommandId.SET_TEXT_BRIGHTNESS, textExtraBrightnessLevel);
     }
 
     // endregion

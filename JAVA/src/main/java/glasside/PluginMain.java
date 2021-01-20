@@ -25,6 +25,7 @@ public class PluginMain {
     private boolean isGlassEnabled;
     private int opacityLevel;
     private int brightnessLevel;
+    private int textExtraBrightnessLevel;
     private int blurType;
     private boolean enableHighContrast;
 
@@ -35,6 +36,7 @@ public class PluginMain {
         this.glassIdeStorage = GlassIdeStorage.getInstance();
         this.opacityLevel = glassIdeStorage.getOpacityLevel();
         this.brightnessLevel = glassIdeStorage.getBrightnessLevel();
+        this.textExtraBrightnessLevel = glassIdeStorage.getTextExtraBrightnessLevel();
         this.blurType = glassIdeStorage.getBlurType();
         this.enableHighContrast = glassIdeStorage.isUseHighContrastTheme();
         this.isGlassEnabled = glassIdeStorage.isEnabled();
@@ -82,19 +84,22 @@ public class PluginMain {
             throw new RuntimeException(initErrorMsg);
     }
 
-    public void enableGlassMode(int opacityLevel, int brightnessLevel, int blurType, boolean enableHighContrast) {
+    public void enableGlassMode(int opacityLevel, int brightnessLevel, int textExtraBrightnessLevel, int blurType,
+                                boolean enableHighContrast) {
         if (isGlassEnabled)
             return;
 
         abortIfInitError();
 
-        getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel, blurType);
+        getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel,
+                textExtraBrightnessLevel, blurType);
 
         if (enableHighContrast && PluginInitializer.getOpenedProjectsCount() <= 1)
             ThemeHelper.enableHighContrastMode();
 
         this.opacityLevel = opacityLevel;
         this.brightnessLevel = brightnessLevel;
+        this.textExtraBrightnessLevel = textExtraBrightnessLevel;
         this.blurType = blurType;
         this.enableHighContrast = enableHighContrast;
         this.isGlassEnabled = true;
@@ -186,6 +191,17 @@ public class PluginMain {
 
     public boolean isEnableHighContrast() {
         return enableHighContrast;
+    }
+
+    public int getTextExtraBrightnessLevel() {
+        return textExtraBrightnessLevel;
+    }
+
+    public void setTextExtraBrightnessLevel(int level) {
+        abortIfInitError();
+        this.textExtraBrightnessLevel = level;
+        if (isGlassEnabled)
+            getRenderer().setTextExtraBrightnessLevel(textExtraBrightnessLevel);
     }
 
 

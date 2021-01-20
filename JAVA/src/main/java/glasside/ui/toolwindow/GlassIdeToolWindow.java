@@ -24,6 +24,8 @@ public class GlassIdeToolWindow {
     private JCheckBox highContrastCheckBox;
     private JButton saveAsDefaultsButton;
     private JCheckBox enableOnStartupCheckBox;
+    private JSlider textExtraBrightness;
+    private JLabel textExtraBrightnessLabel;
 
     private boolean isUiUpdating = false;
     private final PluginMain pluginMain;
@@ -45,20 +47,25 @@ public class GlassIdeToolWindow {
             if (!isUiUpdating) onBrightnessSliderChange(brightnessSlider.getValue());
         });
 
+        textExtraBrightness.addChangeListener(e -> {
+            if (!isUiUpdating) onTextBrightnessSliderChange(textExtraBrightness.getValue());
+        });
+
         blurTypeSlider.addChangeListener(e -> {
             if (!isUiUpdating) onBlurTypeSliderChange(blurTypeSlider.getValue());
         });
+
 
         enableCheckBox.addItemListener(e -> {
             if (!isUiUpdating)
                 onEnableCheckBoxChange(e.getStateChange() == ItemEvent.SELECTED);
         });
 
-
         highContrastCheckBox.addItemListener(e -> {
             if (!isUiUpdating)
                 onEnableHighContrastModeChange(e.getStateChange() == ItemEvent.SELECTED);
         });
+
 
         saveAsDefaultsButton.addActionListener(e -> onSaveSettingsEvent());
 
@@ -99,6 +106,17 @@ public class GlassIdeToolWindow {
         setBlurTypeLabelText(level);
     }
 
+    private void onTextBrightnessSliderChange(int level) {
+
+        try {
+            pluginMain.setTextExtraBrightnessLevel(level);
+        } catch (RuntimeException e) {
+            PluginUiHelpers.showErrorNotificationAndAbort(e.getMessage());
+        }
+
+        setTextBrightnessLabelText(level);
+    }
+
     private void onEnableHighContrastModeChange(boolean enabled) {
         if (!pluginMain.isGlassEffectEnabled())
             return;
@@ -114,7 +132,8 @@ public class GlassIdeToolWindow {
         try {
             if (enabled)
                 pluginMain.enableGlassMode(opacitySlider.getValue(), brightnessSlider.getValue(),
-                        blurTypeSlider.getValue(), highContrastCheckBox.isSelected());
+                        textExtraBrightness.getValue(), blurTypeSlider.getValue(),
+                        highContrastCheckBox.isSelected());
             else
                 pluginMain.disableGlassMode();
 
@@ -131,6 +150,7 @@ public class GlassIdeToolWindow {
         storage.setOpacityLevel(opacitySlider.getValue());
         storage.setBlurType(blurTypeSlider.getValue());
         storage.setBrightnessLevel(brightnessSlider.getValue());
+        storage.setTextExtraBrightnessLevel(textExtraBrightness.getValue());
         storage.setUseHighContrastTheme(highContrastCheckBox.isSelected());
 
         PluginUiHelpers.showInfoNotification("Settings saved!");
@@ -150,6 +170,7 @@ public class GlassIdeToolWindow {
         opacitySlider.setValue(pluginMain.getOpacityLevel());
         brightnessSlider.setValue(pluginMain.getBrightnessLevel());
         blurTypeSlider.setValue(pluginMain.getBlurType());
+        textExtraBrightness.setValue(pluginMain.getTextExtraBrightnessLevel());
         enableCheckBox.setSelected(pluginMain.isGlassEffectEnabled());
         enableOnStartupCheckBox.setSelected(storage.isEnabled());
         highContrastCheckBox.setSelected(pluginMain.isEnableHighContrast());
@@ -157,7 +178,9 @@ public class GlassIdeToolWindow {
 
         setOpacityLabelText(pluginMain.getOpacityLevel());
         setBrightnessLabelText(pluginMain.getBrightnessLevel());
+        setTextBrightnessLabelText(pluginMain.getTextExtraBrightnessLevel());
         setBlurTypeLabelText(pluginMain.getBlurType());
+
     }
 
 
@@ -167,6 +190,11 @@ public class GlassIdeToolWindow {
 
     private void setBrightnessLabelText(int level) {
         brightnessLabel.setText(level + "%");
+    }
+
+
+    private void setTextBrightnessLabelText(int level) {
+        textExtraBrightnessLabel.setText(level + "%");
     }
 
     private void setBlurTypeLabelText(int type) {

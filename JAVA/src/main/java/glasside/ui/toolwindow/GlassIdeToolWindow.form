@@ -3,7 +3,7 @@
   <grid id="26777" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="641" height="475"/>
+      <xy x="20" y="20" width="641" height="477"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -40,7 +40,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="6fec5" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="6fec5" layout-manager="GridLayoutManager" row-count="8" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
@@ -90,7 +90,7 @@
                   </component>
                   <component id="8dd1c" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Type of blur behind the window"/>
@@ -104,7 +104,7 @@
                     </constraints>
                     <properties>
                       <horizontalAlignment value="0"/>
-                      <text value="X%"/>
+                      <text value="70%"/>
                     </properties>
                   </component>
                   <component id="a9683" class="javax.swing.JLabel" binding="brightnessLabel">
@@ -115,13 +115,13 @@
                     </constraints>
                     <properties>
                       <horizontalAlignment value="0"/>
-                      <text value="X%"/>
+                      <text value="70%"/>
                       <verticalTextPosition value="0"/>
                     </properties>
                   </component>
                   <component id="1fc1d" class="javax.swing.JLabel" binding="blurTypeLabel">
                     <constraints>
-                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="1" fill="0" indent="0" use-parent-layout="false">
+                      <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="1" fill="0" indent="0" use-parent-layout="false">
                         <minimum-size width="45" height="-1"/>
                       </grid>
                     </constraints>
@@ -132,13 +132,41 @@
                   </component>
                   <component id="bcb61" class="javax.swing.JSlider" binding="blurTypeSlider">
                     <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <majorTickSpacing value="1"/>
                       <maximum value="2"/>
                       <minorTickSpacing value="1"/>
                       <value value="0"/>
+                    </properties>
+                  </component>
+                  <component id="e6efe" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Text extra brightness"/>
+                    </properties>
+                  </component>
+                  <component id="1d8eb" class="javax.swing.JSlider" binding="textExtraBrightness">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <value value="0"/>
+                    </properties>
+                  </component>
+                  <component id="fb80f" class="javax.swing.JLabel" binding="textExtraBrightnessLabel">
+                    <constraints>
+                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="1" fill="0" indent="0" use-parent-layout="false">
+                        <minimum-size width="45" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <horizontalAlignment value="0"/>
+                      <text value="100%"/>
+                      <verticalTextPosition value="0"/>
                     </properties>
                   </component>
                 </children>
