@@ -1,9 +1,9 @@
-package glasside.tests;
+package glasscode.tests;
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
-import glasside.helpers.WindowsHelpers;
+import glasscode.helpers.WindowsHelpers;
 
 public class Win32Tests extends BasePlatformTestCase {
 

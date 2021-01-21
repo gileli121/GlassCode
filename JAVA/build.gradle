@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.intellij' version '0.6.5'
 }
 
-group 'com.glasside'
+group 'com.glasscode'
 version '1.2.0-SNAPSHOT'
 def isDebugMode = false // If false it will use the debug version of the renderer
 

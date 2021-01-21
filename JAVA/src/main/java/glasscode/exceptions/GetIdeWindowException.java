@@ -1,6 +1,4 @@
-package glasside.exceptions;
-
-import glasside.ui.toolwindow.GlassIdeToolWindow;
+package glasscode.exceptions;
 
 public class GetIdeWindowException extends RuntimeException {
     public GetIdeWindowException(String message) {

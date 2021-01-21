@@ -1,4 +1,4 @@
-package glasside;
+package glasscode;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -10,10 +10,10 @@ import org.jetbrains.annotations.Nullable;
 
 
 @State(
-        name = "glasside.GlassIdeStorage",
-        storages = {@Storage("glassIdePlugin.xml")}
+        name = "glasscode.GlassCodeStorage",
+        storages = {@Storage("glassCodePlugin.xml")}
 )
-public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage> {
+public class GlassCodeStorage implements PersistentStateComponent<GlassCodeStorage> {
 
     private static final int DEFAULT_OPACITY = 70;
     private static final int DEFAULT_BRIGHTNESS = 70;
@@ -33,18 +33,18 @@ public class GlassIdeStorage implements PersistentStateComponent<GlassIdeStorage
     private boolean useHighContrastTheme = DEFAULT_USE_CONTRAST_THEME;
 
 
-    public static GlassIdeStorage getInstance() {
-        return ServiceManager.getService(GlassIdeStorage.class);
+    public static GlassCodeStorage getInstance() {
+        return ServiceManager.getService(GlassCodeStorage.class);
     }
 
 
     @Override
-    public @Nullable GlassIdeStorage getState() {
+    public @Nullable GlassCodeStorage getState() {
         return this;
     }
 
     @Override
-    public void loadState(@NotNull GlassIdeStorage state) {
+    public void loadState(@NotNull GlassCodeStorage state) {
         XmlSerializerUtil.copyBean(state, this);
     }
 

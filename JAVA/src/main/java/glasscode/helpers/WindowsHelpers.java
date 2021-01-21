@@ -1,4 +1,4 @@
-package glasside.helpers;
+package glasscode.helpers;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;

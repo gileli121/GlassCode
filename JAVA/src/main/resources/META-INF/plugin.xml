@@ -3,10 +3,10 @@
 <idea-plugin>
 
     <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
-    <id>gileli121.glasside.windows</id>
+    <id>gileli121.glasscode.windows</id>
 
     <!-- Text to display as name on Preferences/Settings | Plugin page -->
-    <name>GlassIDE (For Windows)</name>
+    <name>GlassCode (For Windows)</name>
 
     <product-descriptor code="PGLASSIDEWIN" release-date="20210121" release-version="20201"/>
 
@@ -21,40 +21,40 @@
                 width: 600px;
             }
         </style>
-        <h1 id="glasside">GlassIDE</h1>
+        <h1 id="glasscode">GlassCode</h1>
         <p>This plugin allows you to make your IDE to be fully transparent while keeping the code sharp and bright.</p>
         <h2 id="introduction">Introduction</h2>
         <p>Adjust the opacity level while keeping the text sharp and bright</p>
-        <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-change-opacity-600px.gif"
+        <p><img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/glass-ide-change-opacity-600px.gif"
                 width="600" alt=""/></p>
-        <p>Using GlassIDE plugin with combination of LiveEdit (WebStorm IDE)</p>
-        <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/live-edit-with-glass-ide-600px.gif"
+        <p>Using GlassCode plugin with combination of LiveEdit (WebStorm IDE)</p>
+        <p><img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/live-edit-with-glass-ide-600px.gif"
                 width="600" alt=""/></p>
-        <p>Using GlassIDE in Java (IntelliJ IDE)</p>
-        <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-java-preview-1-600px.png"
+        <p>Using GlassCode in Java (IntelliJ IDE)</p>
+        <p><img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/glass-ide-java-preview-1-600px.png"
                 width="600" alt=""/></p>
-        <p>Using GlassIDE with blur effect set to high</p>
+        <p>Using GlassCode with blur effect set to high</p>
         <br>
-        <img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-java-high-blur-preview-600px.png"
+        <img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/glass-ide-java-high-blur-preview-600px.png"
              width="600" alt=""/>
         <br>
         <p>&nbsp;</p>
         <h2 id="getting-started">Getting started</h2>
         <ol>
-            <li>Download GlassIDE plugin</li>
+            <li>Download GlassCode plugin</li>
             <li>Install it in your IDE</li>
             <li>It is recommended to use the high contrast theme for the best result or at lest any dark theme. My suggestion is
                 to enable the high contrast theme
             </li>
         </ol>
         <h2 id="how-to-use">How to use</h2>
-        <p>Currently, the only way to use this plugin is to click on the GlassIDE tab here:
+        <p>Currently, the only way to use this plugin is to click on the GlassCode tab here:
             <br>
-            <img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-menu.png" width="600" alt=""/></p>
+            <img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/glass-ide-menu.png" width="600" alt=""/></p>
         <br>
         <p>After that, the following menu will open:</p>
         <br>
-        <img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-menu-panel.png" width="600" alt=""/>
+        <img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/glass-ide-menu-panel.png" width="600" alt=""/>
         <br>
         <p>Click on the <code>Enable</code> checkbox to enable the effect.</p>
         <p>In this menu, the following options available:</p>
@@ -81,10 +81,10 @@
             </li>
         </ul>
         <h4 id="medium-blur-">Medium blur:</h4>
-        <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-blur-medium-600px.png" width="600"
+        <p><img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/glass-ide-blur-medium-600px.png" width="600"
                 alt=""/></p>
         <h4 id="high-blur-">High blur:</h4>
-        <p><img src="https://github.com/gileli121/GlassIDE/raw/main/.github/readme/glass-ide-blur-high-600px.png" width="600"
+        <p><img src="https://github.com/gileli121/GlassCode/raw/main/.github/readme/glass-ide-blur-high-600px.png" width="600"
                 alt=""/></p>
 
         <li><code>Text extra brightness</code> - This option controls the amount of brightness of your code
@@ -131,23 +131,23 @@
     <vendor url="https://github.com/gileli121">gileli121</vendor>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="GlassIDE" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                    factoryClass="glasside.ui.toolwindow.MyToolWindowFactory"/>
+        <toolWindow id="GlassCode" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="glasscode.ui.toolwindow.MyToolWindowFactory"/>
 
-        <applicationConfigurable parentId="appearance" instance="glasside.ui.settings.SettingsManager"
-                                 id="glasside.ui.settings.SettingsManager"
-                                 displayName="GlassIDE"/>
+        <applicationConfigurable parentId="appearance" instance="glasscode.ui.settings.SettingsManager"
+                                 id="glasscode.ui.settings.SettingsManager"
+                                 displayName="GlassCode"/>
 
-        <applicationService serviceImplementation="glasside.GlassIdeStorage"/>
+        <applicationService serviceImplementation="glasscode.GlassCodeStorage"/>
 
-        <projectService serviceImplementation="glasside.PluginMain"/>
+        <projectService serviceImplementation="glasscode.PluginMain"/>
 
 
     </extensions>
 
 
     <applicationListeners>
-        <listener class="glasside.PluginInitializer"
+        <listener class="glasscode.PluginInitializer"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 

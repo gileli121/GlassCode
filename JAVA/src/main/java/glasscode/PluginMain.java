@@ -1,11 +1,11 @@
-package glasside;
+package glasscode;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.util.concurrency.AppExecutorUtil;
-import glasside.exceptions.GetIdeWindowException;
-import glasside.helpers.ThemeHelper;
-import glasside.helpers.WindowsHelpers;
-import glasside.ui.toolwindow.GlassIdeToolWindow;
+import glasscode.exceptions.GetIdeWindowException;
+import glasscode.helpers.ThemeHelper;
+import glasscode.helpers.WindowsHelpers;
+import glasscode.ui.toolwindow.GlassCodeToolWindow;
 
 import java.util.concurrent.ScheduledFuture;
 
@@ -15,12 +15,12 @@ public class PluginMain {
 
 
     private final Project project;
-    private GlassIdeToolWindow glassIdeToolWindow = null;
+    private GlassCodeToolWindow glassCodeToolWindow = null;
     private String initErrorMsg = null;
     private Renderer renderer = null;
     private static final int RENDERER_SCHEDULER_RUN_EVERY_SECONDS = 5;
     private ScheduledFuture<?> rendererMaintainerSF = null;
-    private final GlassIdeStorage glassIdeStorage;
+    private final GlassCodeStorage glassCodeStorage;
 
     private boolean isGlassEnabled;
     private int opacityLevel;
@@ -33,13 +33,13 @@ public class PluginMain {
     public PluginMain(Project project) {
         this.project = project;
 
-        this.glassIdeStorage = GlassIdeStorage.getInstance();
-        this.opacityLevel = glassIdeStorage.getOpacityLevel();
-        this.brightnessLevel = glassIdeStorage.getBrightnessLevel();
-        this.textExtraBrightnessLevel = glassIdeStorage.getTextExtraBrightnessLevel();
-        this.blurType = glassIdeStorage.getBlurType();
-        this.enableHighContrast = glassIdeStorage.isUseHighContrastTheme();
-        this.isGlassEnabled = glassIdeStorage.isEnabled();
+        this.glassCodeStorage = GlassCodeStorage.getInstance();
+        this.opacityLevel = glassCodeStorage.getOpacityLevel();
+        this.brightnessLevel = glassCodeStorage.getBrightnessLevel();
+        this.textExtraBrightnessLevel = glassCodeStorage.getTextExtraBrightnessLevel();
+        this.blurType = glassCodeStorage.getBlurType();
+        this.enableHighContrast = glassCodeStorage.isUseHighContrastTheme();
+        this.isGlassEnabled = glassCodeStorage.isEnabled();
     }
 
     // region init methods
@@ -54,8 +54,8 @@ public class PluginMain {
 
     }
 
-    public void loadGlassIdeToolWindow(GlassIdeToolWindow glassIdeToolWindow) {
-        this.glassIdeToolWindow = glassIdeToolWindow;
+    public void loadToolWindow(GlassCodeToolWindow glassCodeToolWindow) {
+        this.glassCodeToolWindow = glassCodeToolWindow;
     }
 
     public void dispose() {
@@ -91,7 +91,7 @@ public class PluginMain {
 
         abortIfInitError();
 
-        getRenderer().enableGlassEffect(glassIdeStorage.isCudaEnabled(), opacityLevel, brightnessLevel,
+        getRenderer().enableGlassEffect(glassCodeStorage.isCudaEnabled(), opacityLevel, brightnessLevel,
                 textExtraBrightnessLevel, blurType);
 
         if (enableHighContrast && PluginInitializer.getOpenedProjectsCount() <= 1)
@@ -169,8 +169,8 @@ public class PluginMain {
 
     // region getters & setters
 
-    public GlassIdeToolWindow getGlassIdeToolWindow() {
-        return glassIdeToolWindow;
+    public GlassCodeToolWindow getToolWindow() {
+        return glassCodeToolWindow;
     }
 
     public int getBlurType() {

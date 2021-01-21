@@ -1,9 +1,9 @@
-package glasside;
+package glasscode;
 
-import glasside.exceptions.GetIdeWindowException;
-import glasside.helpers.PluginUiHelpers;
-import glasside.helpers.ThemeHelper;
-import glasside.ui.toolwindow.GlassIdeToolWindow;
+import glasscode.exceptions.GetIdeWindowException;
+import glasscode.helpers.PluginUiHelpers;
+import glasscode.helpers.ThemeHelper;
+import glasscode.ui.toolwindow.GlassCodeToolWindow;
 
 import javax.swing.*;
 
@@ -52,20 +52,20 @@ public class PluginThread implements Runnable {
                 pluginMain.disableGlassMode();
 
                 // Update the UI if available
-                GlassIdeToolWindow glassIdeToolWindow = pluginMain.getGlassIdeToolWindow();
-                if (glassIdeToolWindow != null)
-                    glassIdeToolWindow.updateUi();
+                GlassCodeToolWindow glassCodeToolWindow = pluginMain.getToolWindow();
+                if (glassCodeToolWindow != null)
+                    glassCodeToolWindow.updateUi();
 
                 return;
             }
 
             try {
 
-                GlassIdeStorage glassIdeStorage = GlassIdeStorage.getInstance();
+                GlassCodeStorage glassCodeStorage = GlassCodeStorage.getInstance();
 
                 // Start the effect again
                 renderer.enableGlassEffect(
-                        glassIdeStorage.isCudaEnabled(),
+                        glassCodeStorage.isCudaEnabled(),
                         pluginMain.getOpacityLevel(),
                         pluginMain.getBrightnessLevel(),
                         pluginMain.getTextExtraBrightnessLevel(),

@@ -1,2 +1,2 @@
-# GlassIDE
+# GlassCode
 Internal Source Code

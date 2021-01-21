@@ -1,4 +1,4 @@
-package glasside.helpers;
+package glasscode.helpers;
 
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.UITheme;

@@ -1,7 +1,8 @@
-package glasside.ui.settings;
+package glasscode.ui.settings;
 
 import com.intellij.openapi.options.Configurable;
-import glasside.GlassIdeStorage;
+import glasscode.GlassCodeStorage;
+import glasscode.PluginConstants;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,16 +12,16 @@ import javax.swing.*;
 public class SettingsManager implements Configurable {
 
     private SettingsScreen settingsScreen;
-    private final GlassIdeStorage glassIdeStorage;
+    private final GlassCodeStorage glassCodeStorage;
 
     public SettingsManager() {
-        this.glassIdeStorage = GlassIdeStorage.getInstance();
+        this.glassCodeStorage = GlassCodeStorage.getInstance();
     }
 
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
-        return "GlassIDE Settings";
+        return PluginConstants.PLUGIN_NAME +  " Settings";
     }
 
     @Override
@@ -40,7 +41,7 @@ public class SettingsManager implements Configurable {
     public boolean isModified() {
         boolean modified = false;
 
-        if (glassIdeStorage.isCudaEnabled() != settingsScreen.isCudaEnabled())
+        if (glassCodeStorage.isCudaEnabled() != settingsScreen.isCudaEnabled())
             modified = true;
 
         return modified;
@@ -48,7 +49,7 @@ public class SettingsManager implements Configurable {
 
     @Override
     public void apply() {
-        glassIdeStorage.setCudaEnabled(settingsScreen.isCudaEnabled());
+        glassCodeStorage.setCudaEnabled(settingsScreen.isCudaEnabled());
     }
 
     @Override

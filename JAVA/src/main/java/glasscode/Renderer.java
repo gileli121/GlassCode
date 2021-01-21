@@ -1,4 +1,4 @@
-package glasside;
+package glasscode;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -8,7 +8,7 @@ import com.sun.jna.platform.win32.BaseTSD;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
-import glasside.helpers.WindowsHelpers;
+import glasscode.helpers.WindowsHelpers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -253,7 +253,7 @@ public class Renderer {
             Path tmpPath = null;
             IdeaPluginDescriptor[] plugins = PluginManager.getPlugins();
             for (IdeaPluginDescriptor plugin : plugins) {
-                if ("gileli121.glasside.windows".equals(plugin.getPluginId().toString())) {
+                if (PluginConstants.PLUGIN_ID.equals(plugin.getPluginId().toString())) {
                     tmpPath = Paths.get(plugin.getPluginPath().toString(), "bin", "Renderer.exe");
                     break;
                 }

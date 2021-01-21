@@ -1,4 +1,4 @@
-package glasside.ui.toolwindow;
+package glasscode.ui.toolwindow;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -16,9 +16,9 @@ public class MyToolWindowFactory implements ToolWindowFactory {
    * @param toolWindow current tool window
    */
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-    GlassIdeToolWindow glassIdeToolWindow = new GlassIdeToolWindow(project);
+    GlassCodeToolWindow glassCodeToolWindow = new GlassCodeToolWindow(project);
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-    Content content = contentFactory.createContent(glassIdeToolWindow.getContent(), "", false);
+    Content content = contentFactory.createContent(glassCodeToolWindow.getContent(), "", false);
     toolWindow.getContentManager().addContent(content);
   }
 

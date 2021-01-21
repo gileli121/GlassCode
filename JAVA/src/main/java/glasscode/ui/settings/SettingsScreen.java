@@ -1,6 +1,6 @@
-package glasside.ui.settings;
+package glasscode.ui.settings;
 
-import glasside.GlassIdeStorage;
+import glasscode.GlassCodeStorage;
 
 import javax.swing.*;
 
@@ -26,8 +26,8 @@ public class SettingsScreen {
     }
 
     public void updateUi() {
-        GlassIdeStorage glassIdeStorage = GlassIdeStorage.getInstance();
-        setCudaEnabled(glassIdeStorage.isCudaEnabled());
+        GlassCodeStorage glassCodeStorage = GlassCodeStorage.getInstance();
+        setCudaEnabled(glassCodeStorage.isCudaEnabled());
     }
 
 }

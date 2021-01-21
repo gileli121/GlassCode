@@ -1,17 +1,17 @@
 // Copyright 2000-2020 JetBrains s.r.o. and other contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
-package glasside.ui.toolwindow;
+package glasscode.ui.toolwindow;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import glasside.GlassIdeStorage;
-import glasside.PluginMain;
-import glasside.helpers.PluginUiHelpers;
+import glasscode.GlassCodeStorage;
+import glasscode.PluginMain;
+import glasscode.helpers.PluginUiHelpers;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 
-public class GlassIdeToolWindow {
+public class GlassCodeToolWindow {
 
     private JPanel mainContent;
     private JSlider opacitySlider;
@@ -30,11 +30,11 @@ public class GlassIdeToolWindow {
     private boolean isUiUpdating = false;
     private final PluginMain pluginMain;
 
-    public GlassIdeToolWindow(Project project) {
+    public GlassCodeToolWindow(Project project) {
 
         // Get the context
         pluginMain = ServiceManager.getService(project, PluginMain.class);
-        pluginMain.loadGlassIdeToolWindow(this);
+        pluginMain.loadToolWindow(this);
 
         updateUi();
 
@@ -145,7 +145,7 @@ public class GlassIdeToolWindow {
 
     private void onSaveSettingsEvent() {
 
-        GlassIdeStorage storage = GlassIdeStorage.getInstance();
+        GlassCodeStorage storage = GlassCodeStorage.getInstance();
         storage.setEnabled(enableOnStartupCheckBox.isSelected());
         storage.setOpacityLevel(opacitySlider.getValue());
         storage.setBlurType(blurTypeSlider.getValue());
@@ -166,7 +166,7 @@ public class GlassIdeToolWindow {
     public void updateUi() {
 
         isUiUpdating = true;
-        GlassIdeStorage storage = GlassIdeStorage.getInstance();
+        GlassCodeStorage storage = GlassCodeStorage.getInstance();
         opacitySlider.setValue(pluginMain.getOpacityLevel());
         brightnessSlider.setValue(pluginMain.getBrightnessLevel());
         blurTypeSlider.setValue(pluginMain.getBlurType());

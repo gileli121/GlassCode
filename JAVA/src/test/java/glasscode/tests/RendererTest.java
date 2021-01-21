@@ -1,8 +1,8 @@
-package glasside.tests;
+package glasscode.tests;
 
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import glasside.Renderer;
+import glasscode.Renderer;
 
 public class RendererTest extends BasePlatformTestCase {
 
