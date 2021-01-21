@@ -115,6 +115,7 @@
             <ul>
                 <li>Added option to control the brightness of texts/code</li>
                 <li>Fixed rendering bug that some pixels are fully white</li>
+                <li>Plugin name renamed to "GlassCode" instead of "GlassIDE"</li>
             </ul>
             <p>v1.1.3</p>
             <ul>
