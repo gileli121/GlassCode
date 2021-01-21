@@ -27,10 +27,10 @@ public class PluginThread implements Runnable {
 
         if (pluginMain.isEnableHighContrast()) {
             if (PluginInitializer.getOpenedProjectsCount() <= 1) {
-                if (!ThemeHelper.isIsHighContrastEnabled())
+                if (!ThemeHelper.isTemporaryThemeEnabled())
                     SwingUtilities.invokeLater(ThemeHelper::enableHighContrastMode);
             } else {
-                if (ThemeHelper.isIsHighContrastEnabled())
+                if (ThemeHelper.isTemporaryThemeEnabled())
                     SwingUtilities.invokeLater(ThemeHelper::disableHighContrastMode);
             }
         }

@@ -119,7 +119,7 @@ public class PluginMain {
             rendererMaintainerSF = null;
         }
 
-        if (ThemeHelper.isIsHighContrastEnabled())
+        if (ThemeHelper.isTemporaryThemeEnabled())
             ThemeHelper.disableHighContrastMode();
 
         if (renderer != null)
@@ -156,10 +156,10 @@ public class PluginMain {
         if (!isGlassEnabled) return;
 
         if (enableHighContrast) {
-            if (!ThemeHelper.isIsHighContrastEnabled() && PluginInitializer.getOpenedProjectsCount() <= 1)
+            if (!ThemeHelper.isTemporaryThemeEnabled() && PluginInitializer.getOpenedProjectsCount() <= 1)
                 ThemeHelper.enableHighContrastMode();
         } else {
-            if (ThemeHelper.isIsHighContrastEnabled())
+            if (ThemeHelper.isTemporaryThemeEnabled())
                 ThemeHelper.disableHighContrastMode();
         }
 
