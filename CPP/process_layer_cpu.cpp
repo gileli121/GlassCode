@@ -815,10 +815,8 @@ namespace process_layer_cpu
 						auto x_max = x + cube_size;
 						if (x_max > x_size) x_max = x_size;
 
-						auto avg_shapes_avg_color = 0;
-						auto avg_shapes_count = 0;
+
 						byte shape_max_brightness = 0;
-						byte shape_max_darkness = 255;
 
 						for (auto y2 = y; y2 < y_max; y2++)
 							for (auto x2 = x; x2 < x_max; x2++)
@@ -833,34 +831,16 @@ namespace process_layer_cpu
 
 								if (is_shape_color)
 								{
-									avg_shapes_count++;
-									avg_shapes_avg_color += avg_color;
-
 									if (avg_color > shape_max_brightness)
 										shape_max_brightness = avg_color;
-									else if (avg_color < shape_max_darkness)
-										shape_max_darkness = avg_color;
 								}
 							}
 
-						if (avg_shapes_count)
-							avg_shapes_avg_color /= avg_shapes_count;
-
-						// TODO: Part disabled because the logic to support bright background is broken
-						// float scalar;
-						// if (avg_shapes_avg_color >= reduced_color || shape_max_darkness == 255)
-						// 	scalar = 255.0 / static_cast<float>(shape_max_brightness);
-						// else
-						// 	scalar = 255.0 / static_cast<float>(255 - shape_max_darkness);
 
 						float scalar = 255.0 / static_cast<float>(shape_max_brightness);
 
-
 						scalar *= shapes_level;
-						if (scalar <= 1.0)
-							continue;
-
-						const auto is_shapes_dark = avg_shapes_avg_color <= reduced_color;
+						
 
 						for (auto y2 = y; y2 < y_max; y2++)
 							for (auto x2 = x; x2 < x_max; x2++)
@@ -875,40 +855,35 @@ namespace process_layer_cpu
 
 								if (is_shape_color)
 								{
-									if (is_shapes_dark)
+
+									if (scalar > 1)
 									{
-										// TODO: I set it to ignore any case of non-dark background because I should not support it
-										continue;
-										// pixels[point] = 255 - pixels[point];
-										// pixels[point + 1] = 255 - pixels[point + 1];
-										// pixels[point + 2] = 255 - pixels[point + 2];
+
+										int b = pixels[point];
+										int g = pixels[point + 1];
+										int r = pixels[point + 2];
+
+
+										b *= scalar;
+										g *= scalar;
+										r *= scalar;
+
+										auto max = r > g ? r : g;
+										if (b > max) max = b;
+
+										if (max > 255)
+										{
+
+											const auto reduce_scalar = 255 / static_cast<float>(max);
+											b *= reduce_scalar;
+											g *= reduce_scalar;
+											r *= reduce_scalar;
+										}
+
+										pixels[point] = b;
+										pixels[point + 1] = g;
+										pixels[point + 2] = r;
 									}
-
-
-									int b = pixels[point];
-									int g = pixels[point + 1];
-									int r = pixels[point + 2];
-
-
-									b *= scalar;
-									g *= scalar;
-									r *= scalar;
-
-									auto max = r > g ? r : g;
-									if (b > max) max = b;
-
-									if (max > 255)
-									{
-										
-										const auto reduce_scalar = 255 / static_cast<float>(max);
-										b *= reduce_scalar;
-										g *= reduce_scalar;
-										r *= reduce_scalar;
-									}
-
-									pixels[point] = b;
-									pixels[point + 1] = g;
-									pixels[point + 2] = r;
 								}
 								else
 								{

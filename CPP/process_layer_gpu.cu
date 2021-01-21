@@ -332,15 +332,6 @@ namespace process_layer_gpu
 
 			thread_point *= 4;
 
-			__shared__ int avg_shapes_avg_color;
-			__shared__ int avg_shapes_count;
-			if (threadIdx.x == 0)
-			{
-				avg_shapes_avg_color = 0;
-				avg_shapes_count = 0;
-			}
-
-			__syncthreads();
 
 			const auto reduced_point = (y_point / GLASS_MODE_WARP_SIZE_SQRT) * x_reduced + (x_point /
 				GLASS_MODE_WARP_SIZE_SQRT);
@@ -352,41 +343,8 @@ namespace process_layer_gpu
 			const auto is_shape_color = avg_color != reduced_color;
 
 
-			if (is_shape_color)
+			if (!is_shape_color)
 			{
-				atomicAdd(&avg_shapes_count, 1);
-				atomicAdd(&avg_shapes_avg_color, avg_color);
-			}
-
-			__syncthreads();
-
-			if (threadIdx.x == 0)
-			{
-				avg_shapes_avg_color /= avg_shapes_count;
-			}
-
-			__syncthreads();
-
-
-			if (is_shape_color)
-			{
-				if (avg_shapes_avg_color < reduced_color)
-				{
-
-					// TODO: I set it to ignore any case of non-dark background because I should not support it
-					return;
-					
-					// pixels[thread_point] = ~pixels[thread_point];
-					// pixels[thread_point + 1] = ~pixels[thread_point + 1];
-					// pixels[thread_point + 2] = ~pixels[thread_point + 2];
-					//
-					// avg_color = (((pixels[thread_point] + pixels[thread_point + 1] + pixels[thread_point + 2]) / 3) /
-					// 	GLASS_MODE_COLOR_DIV) * GLASS_MODE_COLOR_DIV;
-				}
-			}
-			else
-			{
-				//pixels[thread_point] = pixels[thread_point + 1] = pixels[thread_point + 2] = pixels[thread_point + 3] = 0;
 
 				if (dark_background)
 				{
