@@ -3,7 +3,7 @@
 <idea-plugin>
 
     <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
-    <id>gileli121.glasscode.windows</id>
+    <id>gileli121.glasside.windows</id>
 
     <!-- Text to display as name on Preferences/Settings | Plugin page -->
     <name>GlassCode (For Windows)</name>
