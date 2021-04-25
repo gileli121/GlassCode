@@ -19,7 +19,7 @@ public class GlassCodeStorage implements PersistentStateComponent<GlassCodeStora
     private static final int DEFAULT_BRIGHTNESS = 60;
     private static final int DEFAULT_BLUR_TYPE = 0;
     private static final int DEFAULT_TEXT_EXTRA_BRIGHTNESS = 0;
-    private static final boolean DEFAULT_CUDA_ENABLED = true;
+    private static final boolean DEFAULT_CUDA_ENABLED = false;
     private static final boolean DEFAULT_IS_GLASS_ENABLED = false;
     private static final boolean DEFAULT_USE_CONTRAST_THEME = true;
 
