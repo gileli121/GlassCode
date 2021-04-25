@@ -5,6 +5,10 @@ plugins {
 
 group 'com.glasscode'
 version '1.2.2-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 def isDebugMode = false // If false it will use the debug version of the renderer
 
 repositories {
