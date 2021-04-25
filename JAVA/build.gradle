@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.glasscode'
-version '1.2.1-SNAPSHOT'
+version '1.2.2-SNAPSHOT'
 def isDebugMode = false // If false it will use the debug version of the renderer
 
 repositories {

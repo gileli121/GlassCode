@@ -112,6 +112,11 @@
     </description>
     <change-notes>
         <![CDATA[
+            <p>1.2.2</p>
+            <ul>
+                <li>Fixed: Issue that the plugin is not compatible with 2021.1 releases</li>
+                <li>Changed: The plugin will not use NVIDIA CUDA GPU acceleration by default to ensure that it will work for any computer</li>
+            </ul>
             <p>1.2.1</p>
             <ul>
                 <li>Remove the "Paid" tag from plugin</li>
