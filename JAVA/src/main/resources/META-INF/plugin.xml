@@ -8,7 +8,8 @@
     <!-- Text to display as name on Preferences/Settings | Plugin page -->
     <name>GlassCode (For Windows)</name>
 
-    <product-descriptor code="PGLASSIDEWIN" release-date="20210121" release-version="20201"/>
+<!--    Disabled paid mark-->
+<!--    <product-descriptor code="PGLASSIDEWIN" release-date="20210121" release-version="20201"/>-->
 
     <!-- Indicate this plugin can be loaded in all IntelliJ Platform-based products. -->
     <depends>com.intellij.modules.platform</depends>
@@ -111,6 +112,10 @@
     </description>
     <change-notes>
         <![CDATA[
+            <p>1.2.1</p>
+            <ul>
+                <li>Remove the "Paid" tag from plugin</li>
+            </ul>
             <p>1.2.0</p>
             <ul>
                 <li>Added option to control the brightness of texts/code</li>
