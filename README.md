@@ -36,11 +36,15 @@ If you think that you can optimize the performance for CPU (without GPU Accelera
 https://github.com/gileli121/GlassCode/blob/80150bd18be2118cfde4b3943950ba65d8746dc8/CPP/process_layer_cpu.cpp#L690
 Replace this function with your faster algorithm and submit PR.
 The function is responsible for detecting the texts(or any shapes...) so that when the opacity applied, the opacity will not include the texts.
+
 The result will look like this
 ![image](https://user-images.githubusercontent.com/17680514/116011894-f9d39980-a62f-11eb-931d-489effaf5f4a.png)
 That the texts/shapes have no opacity at all but everything around it have opacity. 
+
 The magic was done here:
+
 CPU algorithm: https://github.com/gileli121/GlassCode/blob/80150bd18be2118cfde4b3943950ba65d8746dc8/CPP/process_layer_cpu.cpp#L690
+
 NVIDIA GPU algorithm (works much faster!): https://github.com/gileli121/GlassCode/blob/1c89a644bae2b2c51f274b3ad1aee07fb0d36ae8/CPP/process_layer_gpu.cu#L433
 
 
