@@ -15,13 +15,13 @@ import org.jetbrains.annotations.Nullable;
 )
 public class GlassCodeStorage implements PersistentStateComponent<GlassCodeStorage> {
 
-    private static final int DEFAULT_OPACITY = 80;
-    private static final int DEFAULT_BRIGHTNESS = 60;
-    private static final int DEFAULT_BLUR_TYPE = 0;
+    private static final int DEFAULT_OPACITY = 90;
+    private static final int DEFAULT_BRIGHTNESS = 100;
+    private static final int DEFAULT_BLUR_TYPE = 1;
     private static final int DEFAULT_TEXT_EXTRA_BRIGHTNESS = 0;
-    private static final boolean DEFAULT_CUDA_ENABLED = false;
+    private static final boolean DEFAULT_CUDA_ENABLED = true;
     private static final boolean DEFAULT_IS_GLASS_ENABLED = false;
-    private static final boolean DEFAULT_USE_CONTRAST_THEME = true;
+    private static final boolean DEFAULT_USE_CONTRAST_THEME = false;
 
     private boolean wasSavedBefore = false;
     private int opacityLevel = DEFAULT_OPACITY;
