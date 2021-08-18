@@ -112,6 +112,10 @@
     </description>
     <change-notes>
         <![CDATA[
+            <p>1.2.4></p>
+            <ul>
+                <li>Fixed compatibility issue with 2021.2 releases</li>
+            </ul>
             <p>1.2.3</p>
             <ul>
                 <li>Changed default plugin settings</li>

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.glasscode'
-version '1.2.3-SNAPSHOT'
+version '1.2.4-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -39,7 +39,8 @@ sourceSets {
 
 patchPluginXml {
     version = project.version
-    sinceBuild = '202'
+    sinceBuild = '200'
+    untilBuild = '300.*'
 }
 
 runIde {
